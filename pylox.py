@@ -141,9 +141,32 @@ class Scanner(object):
                     self.advance()
             else:
                 self.add_token(TokenType.SLASH)
+        elif c in ' \r\t':
+            # ignore whitespace
+            pass
+        elif c == '\n':
+            self.line += 1
+        elif c == '"':
+            self.string()
         else:
             print("ERROR!! Unexpected character: '{}'".format(c))
 
+    def string(self):
+        while self.peek() != '"' and not self.is_at_end():
+            if self.peek() == '\n':
+                # multiline string!
+                self.line += 1
+            self.advance()
+
+        if self.is_at_end():
+            # unterminated string!
+            print("ERROR! unterminated string!")
+            return
+
+        # move past close of string
+        self.advance()
+        text = self.source[self.start + 1:self.current - 1]
+        self.add_token(TokenType.STRING, text)
 
 def run_file(script):
     print("Running with source: {}".format(script))
