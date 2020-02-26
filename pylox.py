@@ -44,6 +44,26 @@ class TokenType(Enum):
     EOF = auto()
 
 
+KEYWORDS = {
+    "and": TokenType.AND,
+    "class": TokenType.CLASS,
+    "else": TokenType.ELSE,
+    "false": TokenType.FALSE,
+    "for": TokenType.FOR,
+    "fun": TokenType.FUN,
+    "if": TokenType.IF,
+    "nil": TokenType.NIL,
+    "or": TokenType.OR,
+    "print": TokenType.PRINT,
+    "return": TokenType.RETURN,
+    "super": TokenType.SUPER,
+    "this": TokenType.THIS,
+    "true": TokenType.TRUE,
+    "var": TokenType.VAR,
+    "while": TokenType.WHILE,
+}
+
+
 class Token(object):
     def __init__(self, token_type, lexeme, literal, line):
         self.token_type = token_type
@@ -154,6 +174,8 @@ class Scanner(object):
             self.string()
         elif self.is_digit(c):
             self.number()
+        elif self.is_alpha(c):
+            self.identifier()
         else:
             print("ERROR!! Unexpected character: '{}'".format(c))
 
@@ -177,6 +199,12 @@ class Scanner(object):
     def is_digit(self, c):
         return c >= '0' and c <= '9'
 
+    def is_alpha(self, c):
+        return (c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or c == '_'
+
+    def is_alphanumeric(self, c):
+        return self.is_digit(c) or self.is_alpha(c)
+
     def number(self):
         while self.is_digit(self.peek()):
             self.advance()
@@ -185,6 +213,18 @@ class Scanner(object):
         while self.is_digit(self.peek()):
             self.advance()
         self.add_token(TokenType.NUMBER, float(self.source[self.start:self.current]))
+
+    def identifier(self):
+        while self.is_alphanumeric(self.peek()):
+            self.advance()
+
+        text = self.source[self.start:self.current]
+        if text in KEYWORDS:
+            # lox-defined keyword
+            self.add_token(KEYWORDS[text])
+        else:
+            # user-defined keyword
+            self.add_token(TokenType.IDENTIFIER)
 
 
 def run_file(script):
