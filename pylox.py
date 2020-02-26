@@ -104,6 +104,10 @@ class Scanner(object):
     def peek(self):
         return '\0' if self.is_at_end() else self.source[self.current]
 
+    def peek_next(self):
+        index = self.current + 1
+        return self.source[index] if index < len(self.source) else '\0'
+
     def scan_token(self):
         c = self.advance()
         if c == '(':
@@ -148,6 +152,8 @@ class Scanner(object):
             self.line += 1
         elif c == '"':
             self.string()
+        elif self.is_digit(c):
+            self.number()
         else:
             print("ERROR!! Unexpected character: '{}'".format(c))
 
@@ -167,6 +173,19 @@ class Scanner(object):
         self.advance()
         text = self.source[self.start + 1:self.current - 1]
         self.add_token(TokenType.STRING, text)
+
+    def is_digit(self, c):
+        return c >= '0' and c <= '9'
+
+    def number(self):
+        while self.is_digit(self.peek()):
+            self.advance()
+        if self.peek() == '.' and self.is_digit(self.peek_next()):
+            self.advance()
+        while self.is_digit(self.peek()):
+            self.advance()
+        self.add_token(TokenType.NUMBER, float(self.source[self.start:self.current]))
+
 
 def run_file(script):
     print("Running with source: {}".format(script))
