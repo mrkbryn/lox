@@ -4,7 +4,7 @@ from enum import Enum, auto
 
 class TokenType(Enum):
     LEFT_PAREN = auto()
-    RIGHT_PARENT = auto()
+    RIGHT_PAREN = auto()
     LEFT_BRACE = auto()
     RIGHT_BRACE = auto()
     COMMA = auto()
@@ -51,10 +51,12 @@ class Token(object):
         self.literal = literal
         self.line = line
 
+    def __repr__(self):
+        return "({} {} {})".format(self.token_type, self.lexeme, self.literal)
+
 
 class Lox(object):
     def __init__(self):
-        self.line = 0
         self.had_error = False
 
     def run(self, source):
@@ -67,6 +69,82 @@ class Lox(object):
         print("[line {}] Error{}: {}".format(line, where, msg))
 
 
+class Scanner(object):
+    def __init__(self, source):
+        self.source = source
+        self.start = 0
+        self.current = 0
+        self.line = 1
+        self.tokens = []
+
+    def is_at_end(self):
+        return self.current >= len(self.source)
+
+    def scan_tokens(self):
+        while not self.is_at_end():
+            self.start = self.current
+            self.scan_token()
+        self.tokens.append(Token(TokenType.EOF, "", None, self.line))
+        return self.tokens
+
+    def add_token(self, token_type, literal=None):
+        text = self.source[self.start:self.current]
+        self.tokens.append(Token(token_type, text, literal, self.line))
+
+    def advance(self):
+        self.current += 1
+        return self.source[self.current - 1]
+
+    def match(self, expected):
+        if self.is_at_end() or self.source[self.current] != expected:
+            return False
+        self.current += 1
+        return True
+
+    def peek(self):
+        return '\0' if self.is_at_end() else self.source[self.current]
+
+    def scan_token(self):
+        c = self.advance()
+        if c == '(':
+            self.add_token(TokenType.LEFT_PAREN)
+        elif c == ')':
+            self.add_token(TokenType.RIGHT_PAREN)
+        elif c == '{':
+            self.add_token(TokenType.LEFT_BRACE)
+        elif c == '}':
+            self.add_token(TokenType.RIGHT_BRACE)
+        elif c == ',':
+            self.add_token(TokenType.COMMA)
+        elif c == '.':
+            self.add_token(TokenType.DOT)
+        elif c == '-':
+            self.add_token(TokenType.MINUS)
+        elif c == '+':
+            self.add_token(TokenType.PLUS)
+        elif c == ';':
+            self.add_token(TokenType.SEMICOLON)
+        elif c == '*':
+            self.add_token(TokenType.STAR)
+        elif c == '!':
+            self.add_token(TokenType.BANG_EQUAL if self.match("=") else TokenType.BANG)
+        elif c == '=':
+            self.add_token(TokenType.EQUAL_EQUAL if self.match("=") else TokenType.EQUAL)
+        elif c == '<':
+            self.add_token(TokenType.LESS_EQUAL if self.match("=") else TokenType.LESS)
+        elif c == '>':
+            self.add_token(TokenType.GREATER_EQUAL if self.match("=") else TokenType.GREATER)
+        elif c == '/':
+            if self.match('/'):
+                # comments go the end of the line
+                while self.peek() != '\n' and not self.is_at_end():
+                    self.advance()
+            else:
+                self.add_token(TokenType.SLASH)
+        else:
+            print("ERROR!! Unexpected character: '{}'".format(c))
+
+
 def run_file(script):
     print("Running with source: {}".format(script))
     with open(script) as f:
@@ -75,10 +153,11 @@ def run_file(script):
 
 
 def run_prompt():
-    lox = Lox()
     while True:
         line = input("> ")
-        lox.run(line)
+        scanner = Scanner(line)
+        tokens = scanner.scan_tokens()
+        print(tokens)
 
 
 if __name__ == "__main__":
