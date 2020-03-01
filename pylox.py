@@ -17,7 +17,8 @@ class PyLox(object):
             parser = Parser(tokens)
             expression = parser.expression()
             print(" expression -> " + str(expression))
-            self.interpreter.interpret(expression)
+            if expression:
+                self.interpreter.interpret(expression)
 
 
 if __name__ == "__main__":
