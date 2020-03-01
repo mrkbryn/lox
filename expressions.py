@@ -11,7 +11,7 @@ class BinaryExpr(Expr):
         self.right = right
 
     def __repr__(self):
-        return "BinaryExpr"
+        return "BinaryExpr({}, {}, {})".format(self.left, self.operator, self.right)
 
 
 class UnaryExpr(Expr):
@@ -20,7 +20,7 @@ class UnaryExpr(Expr):
         self.right = right
 
     def __repr__(self):
-        return "UnaryExpr"
+        return "UnaryExpr({}, {})".format(self.operator, self.right)
 
 
 class LiteralExpr(Expr):
@@ -28,7 +28,7 @@ class LiteralExpr(Expr):
         self.value = value
 
     def __repr__(self):
-        return "LiteralExpr"
+        return "LiteralExpr({})".format(self.value)
 
 
 class GroupingExpr(Expr):
@@ -36,6 +36,6 @@ class GroupingExpr(Expr):
         self.expression = expression
 
     def __repr__(self):
-        return "GroupingExpr"
+        return "GroupingExpr({})".format(self.expression)
 
 
