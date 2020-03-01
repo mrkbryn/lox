@@ -1,5 +1,5 @@
 from expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr
-from pylox import TokenType
+from scanner import Token, TokenType, Scanner
 
 
 class Parser(object):
@@ -33,28 +33,76 @@ class Parser(object):
                 return True
         return False
 
+    def consume(self, token_type, message):
+        if self.check(token_type):
+            return self.advance()
+        self.error(self.peek(), message)
+
+    def error(self, token, message):
+        print("ERROR")
+        raise Exception(message)
+
     def expression(self):
-        raise Exception("TODO")
+        return self.equality()
 
     def equality(self):
-        raise Exception("TODO")
+        expr = self.comparison()
+        while self.match([TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL]):
+            operator = self.previous()
+            right = self.comparison()
+            expr = BinaryExpr(expr, operator, right)
+        return expr
 
     def comparison(self):
-        raise Exception("TODO")
+        expr = self.addition()
+        while self.match([TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL]):
+            operator = self.previous()
+            right = self.addition()
+            expr = BinaryExpr(expr, operator, right)
+        return expr
 
     def addition(self):
-        raise Exception("TODO")
+        expr = self.multiplication()
+        while self.match([TokenType.MINUS, TokenType.PLUS]):
+            operator = self.previous()
+            right = self.multiplication()
+            expr = BinaryExpr(expr, operator, right)
+        return expr
 
     def multiplication(self):
-        raise Exception("TODO")
+        expr = self.unary()
+        while self.match([TokenType.SLASH, TokenType.STAR]):
+            operator = self.previous()
+            right = self.unary()
+            expr = BinaryExpr(expr, operator, right)
+        return expr
 
     def unary(self):
-        raise Exception("TODO")
+        if self.match([TokenType.BANG, TokenType.MINUS]):
+            operator = self.previous()
+            right = self.unary()
+            return UnaryExpr(operator, right)
+        return self.primary()
 
     def primary(self):
-        raise Exception("TODO")
+        if self.match([TokenType.FALSE]):
+            return LiteralExpr(False)
+        if self.match([TokenType.TRUE]):
+            return LiteralExpr(True)
+        if self.match([TokenType.NIL]):
+            return LiteralExpr(None)
+        if self.match([TokenType.NUMBER, TokenType.STRING]):
+            return LiteralExpr(self.previous().literal)
+        if self.match([TokenType.LEFT_PAREN]):
+            expr = self.expression()
+            self.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
+            return GroupingExpr(expr)
 
 
 if __name__ == "__main__":
-    tokens = []
+    scanner = Scanner("1 + 2.0")
+    tokens = scanner.scan_tokens()
+    print(tokens)
     parser = Parser(tokens)
+    expression = parser.expression()
+    print(expression)
