@@ -1,17 +1,23 @@
 import sys
 from scanner import Scanner
 from parser import Parser
+from interpreter import Interpreter
 
 
-def run_prompt():
-    while True:
-        line = input("> ")
-        scanner = Scanner(line)
-        tokens = scanner.scan_tokens()
-        print(" tokens     -> " + str(tokens))
-        parser = Parser(tokens)
-        expression = parser.expression()
-        print(" expression -> " + str(expression))
+class PyLox(object):
+    def __init__(self):
+        self.interpreter = Interpreter()
+
+    def run_prompt(self):
+        while True:
+            line = input("> ")
+            scanner = Scanner(line)
+            tokens = scanner.scan_tokens()
+            print(" tokens     -> " + str(tokens))
+            parser = Parser(tokens)
+            expression = parser.expression()
+            print(" expression -> " + str(expression))
+            self.interpreter.interpret(expression)
 
 
 if __name__ == "__main__":
@@ -19,4 +25,5 @@ if __name__ == "__main__":
         print("Usage: pylox")
         exit(1)
     else:
-        run_prompt()
+        pl = PyLox()
+        pl.run_prompt()

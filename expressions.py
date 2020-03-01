@@ -1,7 +1,7 @@
 
 class Expr(object):
     def accept(self, visitor):
-        visitor.visit(self)
+        return visitor.visit(self)
 
 
 class BinaryExpr(Expr):

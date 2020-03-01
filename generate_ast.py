@@ -16,7 +16,7 @@ def generate_class(name, super_class, props):
 expression_template = """
 class Expr(object):
     def accept(self, visitor):
-        visitor.visit(self)
+        return visitor.visit(self)
 
 """
 
