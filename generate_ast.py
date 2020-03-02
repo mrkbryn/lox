@@ -23,7 +23,6 @@ class Stmt(object):
     def accept(self, visitor):
         return visitor.visit(self)
 
-
 """
 
 print(expression_template)
@@ -31,5 +30,7 @@ generate_class("BinaryExpr", "Expr", ["left", "operator", "right"])
 generate_class("UnaryExpr", "Expr", ["operator", "right"])
 generate_class("LiteralExpr", "Expr", ["value"])
 generate_class("GroupingExpr", "Expr", ["expression"])
+generate_class("Variable", "Expr", ["name"])
 generate_class("Expression", "Stmt", ["expression"])
 generate_class("Print", "Stmt", ["expression"])
+generate_class("Var", "Stmt", ["name", "initializer"])

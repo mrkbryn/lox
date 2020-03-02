@@ -44,6 +44,14 @@ class GroupingExpr(Expr):
         return "GroupingExpr({})".format(self.expression)
 
 
+class Variable(Expr):
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return "Variable({})".format(self.name)
+
+
 class Expression(Stmt):
     def __init__(self, expression):
         self.expression = expression
@@ -58,3 +66,12 @@ class Print(Stmt):
 
     def __repr__(self):
         return "Print({})".format(self.expression)
+
+
+class Var(Stmt):
+    def __init__(self, name, initializer):
+        self.name = name
+        self.initializer = initializer
+
+    def __repr__(self):
+        return "Var({}, {})".format(self.name, self.initializer)
