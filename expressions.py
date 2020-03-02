@@ -4,6 +4,12 @@ class Expr(object):
         return visitor.visit(self)
 
 
+class Stmt(object):
+    def accept(self, visitor):
+        return visitor.visit(self)
+
+
+
 class BinaryExpr(Expr):
     def __init__(self, left, operator, right):
         self.left = left
@@ -37,5 +43,21 @@ class GroupingExpr(Expr):
 
     def __repr__(self):
         return "GroupingExpr({})".format(self.expression)
+
+
+class Expression(Stmt):
+    def __init__(self, expression):
+        self.expression = expression
+
+    def __repr__(self):
+        return "Expression({})".format(self.expression)
+
+
+class Print(Stmt):
+    def __init__(self, expression):
+        self.expression = expression
+
+    def __repr__(self):
+        return "Print({})".format(self.expression)
 
 
