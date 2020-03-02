@@ -1,5 +1,6 @@
 from expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr
 from scanner import Token, TokenType, Scanner
+from exceptions import RuntimeException
 
 
 class Parser(object):
@@ -39,7 +40,6 @@ class Parser(object):
         self.error(self.peek(), message)
 
     def error(self, token, message):
-        print("ERROR")
         raise Exception(message)
 
     def expression(self):

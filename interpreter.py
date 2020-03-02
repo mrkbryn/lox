@@ -1,5 +1,6 @@
 from expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr
 from scanner import TokenType
+from exceptions import RuntimeException
 
 
 class Interpreter(object):
@@ -32,6 +33,7 @@ class Interpreter(object):
     def visit_unary_expr(self, expr):
         right = self.evaluate(expr.right)
         if expr.operator.token_type == TokenType.MINUS:
+            self._check_number_operand(expr.operator, right)
             return -1 * right
         if expr.operator.token_type == TokenType.BANG:
             return not self.is_truthy(right)
@@ -42,20 +44,28 @@ class Interpreter(object):
         right = self.evaluate(expr.right)
         operator_type = expr.operator.token_type
         if operator_type == TokenType.GREATER:
+            self._check_number_operands(expr.operator, left, right)
             return left > right
         if operator_type == TokenType.GREATER_EQUAL:
+            self._check_number_operands(expr.operator, left, right)
             return left >= right
         if operator_type == TokenType.LESS:
+            self._check_number_operands(expr.operator, left, right)
             return left < right
         if operator_type == TokenType.LESS_EQUAL:
+            self._check_number_operands(expr.operator, left, right)
             return left <= right
         if operator_type == TokenType.MINUS:
+            self._check_number_operands(expr.operator, left, right)
             return left - right
         if operator_type == TokenType.SLASH:
+            self._check_number_operands(expr.operator, left, right)
             return left / right
         if operator_type == TokenType.STAR:
+            self._check_number_operands(expr.operator, left, right)
             return left * right
         if operator_type == TokenType.PLUS:
+            self._check_number_operands(expr.operator, left, right)
             return left + right
         if operator_type == TokenType.EQUAL_EQUAL:
             return self.is_equal(left, right)
@@ -76,3 +86,13 @@ class Interpreter(object):
         if obj1 is None:
             return False
         return obj1 == obj2
+
+    def _check_number_operand(self, operator, operand):
+        if type(operand) == float:
+            return
+        raise RuntimeException(operator, "Operand must be a number.")
+
+    def _check_number_operands(self, operator, left, right):
+        if type(left) == float and type(right) == float:
+            return
+        raise RuntimeException(operator, "Operands must be numbers.")
