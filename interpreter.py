@@ -1,13 +1,13 @@
-from expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr
+from expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, Print, Expression
 from scanner import TokenType
 from exceptions import RuntimeException
 
 
 class Interpreter(object):
-    def interpret(self, expr):
+    def interpret(self, statements):
         try:
-            value = self.evaluate(expr)
-            print(value)
+            for stmt in statements:
+                self.execute(stmt)
         except Exception as e:
             print("Runtime Exception: {}".format(e))
 
@@ -23,6 +23,10 @@ class Interpreter(object):
             return self.visit_literal_expr(expr)
         elif isinstance(expr, GroupingExpr):
             return self.visit_grouping_expr(expr)
+        elif isinstance(expr, Print):
+            return self.visit_print_stmt(expr)
+        elif isinstance(expr, Expression):
+            return self.visit_expression_stmt(expr)
 
     def visit_literal_expr(self, expr):
         return expr.value
@@ -72,6 +76,18 @@ class Interpreter(object):
         if operator_type == TokenType.BANG_EQUAL:
             return not self.is_equal(left, right)
         return None
+
+    def visit_expression_stmt(self, stmt):
+        self.evaluate(stmt.expression)
+        return None
+
+    def visit_print_stmt(self, stmt):
+        value = self.evaluate(stmt.expression)
+        print(value)
+        return None
+
+    def execute(self, stmt):
+        stmt.accept(self)
 
     def is_truthy(self, obj):
         if obj is None:

@@ -9,7 +9,6 @@ class Stmt(object):
         return visitor.visit(self)
 
 
-
 class BinaryExpr(Expr):
     def __init__(self, left, operator, right):
         self.left = left
@@ -59,5 +58,3 @@ class Print(Stmt):
 
     def __repr__(self):
         return "Print({})".format(self.expression)
-
-

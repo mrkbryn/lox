@@ -10,15 +10,16 @@ class PyLox(object):
 
     def run_prompt(self):
         while True:
-            line = input("> ")
-            scanner = Scanner(line)
-            tokens = scanner.scan_tokens()
-            print(" tokens     -> " + str(tokens))
+            tokens = Scanner(input("> ")).scan_tokens()
+            # print(tokens)
             parser = Parser(tokens)
-            expression = parser.expression()
-            print(" expression -> " + str(expression))
-            if expression:
-                self.interpreter.interpret(expression)
+            try:
+                statements = parser.parse()
+            except Exception as e:
+                print("Error: {}".format(e))
+                continue
+            # print(" expression -> " + str(statements))
+            self.interpreter.interpret(statements)
 
 
 if __name__ == "__main__":

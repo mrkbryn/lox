@@ -1,4 +1,4 @@
-from expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr
+from expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, Print, Expression
 from scanner import Token, TokenType, Scanner
 from exceptions import RuntimeException
 
@@ -41,6 +41,27 @@ class Parser(object):
 
     def error(self, token, message):
         raise Exception(message)
+
+    def parse(self):
+        statements = []
+        while not self.is_at_end():
+            statements.append(self.statement())
+        return statements
+
+    def statement(self):
+        if self.match([TokenType.PRINT]):
+            return self.print_statement()
+        return self.expression_statement()
+
+    def print_statement(self):
+        value = self.expression()
+        self.consume(TokenType.SEMICOLON, "Expect ';' after value.")
+        return Print(value)
+
+    def expression_statement(self):
+        expr = self.expression()
+        self.consume(TokenType.SEMICOLON, "Expect ';' after expression.")
+        return Expression(expr)
 
     def expression(self):
         return self.equality()
@@ -104,5 +125,5 @@ if __name__ == "__main__":
     tokens = scanner.scan_tokens()
     print(tokens)
     parser = Parser(tokens)
-    expression = parser.expression()
-    print(expression)
+    statements = parser.parse()
+    print(statements)
