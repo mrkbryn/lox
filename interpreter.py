@@ -1,9 +1,13 @@
-from expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, Print, Expression
+from expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, Print, Expression, Var, Variable
 from scanner import TokenType
 from exceptions import RuntimeException
+from environment import Environment
 
 
 class Interpreter(object):
+    def __init__(self):
+        self.environment = Environment()
+
     def interpret(self, statements):
         try:
             for stmt in statements:
@@ -27,6 +31,10 @@ class Interpreter(object):
             return self.visit_print_stmt(expr)
         elif isinstance(expr, Expression):
             return self.visit_expression_stmt(expr)
+        elif isinstance(expr, Var):
+            return self.visit_var_stmt(expr)
+        elif isinstance(expr, Variable):
+            return self.visit_variable_expr(expr)
 
     def visit_literal_expr(self, expr):
         return expr.value
@@ -85,6 +93,17 @@ class Interpreter(object):
         value = self.evaluate(stmt.expression)
         print(value)
         return None
+
+    def visit_var_stmt(self, stmt):
+        if stmt.initializer:
+            value = self.evaluate(stmt.initializer)
+        else:
+            value = None
+        self.environment.define(stmt.name.lexeme, value)
+        return None
+
+    def visit_variable_expr(self, expr):
+        return self.environment.get(expr.name)
 
     def execute(self, stmt):
         stmt.accept(self)

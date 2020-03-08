@@ -1,31 +1,35 @@
-import sys
+import argparse
 from scanner import Scanner
 from parser import Parser
 from interpreter import Interpreter
 
+PYLOX_PROMPT = "> "
+
 
 class PyLox(object):
-    def __init__(self):
+    def __init__(self, verbose=False):
         self.interpreter = Interpreter()
+        self.verbose = verbose
 
     def run_prompt(self):
         while True:
-            tokens = Scanner(input("> ")).scan_tokens()
-            # print(tokens)
+            tokens = Scanner(input(PYLOX_PROMPT)).scan_tokens()
+            if self.verbose:
+                print(tokens)
             parser = Parser(tokens)
             try:
                 statements = parser.parse()
             except Exception as e:
                 print("Error: {}".format(e))
                 continue
-            # print(" expression -> " + str(statements))
+            if self.verbose:
+                print(" expression -> " + str(statements))
             self.interpreter.interpret(statements)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        print("Usage: pylox")
-        exit(1)
-    else:
-        pl = PyLox()
-        pl.run_prompt()
+    parser = argparse.ArgumentParser(description="Pylox interpreter")
+    parser.add_argument("--verbose", "-v", dest="verbose", action="store_true")
+    args = parser.parse_args()
+    pl = PyLox(verbose=args.verbose)
+    pl.run_prompt()
