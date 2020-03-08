@@ -1,10 +1,11 @@
-from expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, Print, Expression, Var, Variable
+from expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, Print, Expression, Var, Variable, Assign
 from scanner import Token, TokenType, Scanner
 from exceptions import RuntimeException
 
 
 class Parser(object):
-    def __init__(self, tokens):
+    def __init__(self, tokens, verbose=False):
+        self.verbose = verbose
         self.tokens = tokens
         self.current = 0
 
@@ -83,7 +84,20 @@ class Parser(object):
         return Expression(expr)
 
     def expression(self):
-        return self.equality()
+        return self.assignment()
+
+    def assignment(self):
+        expr = self.equality()
+
+        if self.match([TokenType.EQUAL]):
+            equals = self.previous()
+            value = self.assignment()
+            if isinstance(expr, Variable):
+                name = expr.name
+                return Assign(name, value)
+            self.error(equals, "Invalid assignment target.")
+
+        return expr
 
     def equality(self):
         expr = self.comparison()

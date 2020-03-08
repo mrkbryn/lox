@@ -75,7 +75,8 @@ class Token(object):
 
 
 class Scanner(object):
-    def __init__(self, source):
+    def __init__(self, source, verbose=False):
+        self.verbose = verbose
         self.source = source
         self.start = 0
         self.current = 0

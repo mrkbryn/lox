@@ -8,12 +8,12 @@ PYLOX_PROMPT = "> "
 
 class PyLox(object):
     def __init__(self, verbose=False):
-        self.interpreter = Interpreter()
         self.verbose = verbose
+        self.interpreter = Interpreter(self.verbose)
 
     def run_prompt(self):
         while True:
-            tokens = Scanner(input(PYLOX_PROMPT)).scan_tokens()
+            tokens = Scanner(input(PYLOX_PROMPT), verbose=self.verbose).scan_tokens()
             if self.verbose:
                 print(tokens)
             parser = Parser(tokens)

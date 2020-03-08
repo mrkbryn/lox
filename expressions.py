@@ -9,6 +9,15 @@ class Stmt(object):
         return visitor.visit(self)
 
 
+class Assign(Expr):
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+    def __repr__(self):
+        return "Assign({}, {})".format(self.name, self.value)
+
+
 class BinaryExpr(Expr):
     def __init__(self, left, operator, right):
         self.left = left

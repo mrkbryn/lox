@@ -26,6 +26,7 @@ class Stmt(object):
 """
 
 print(expression_template)
+generate_class("Assign", "Expr", ["name", "value"])
 generate_class("BinaryExpr", "Expr", ["left", "operator", "right"])
 generate_class("UnaryExpr", "Expr", ["operator", "right"])
 generate_class("LiteralExpr", "Expr", ["value"])
