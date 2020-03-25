@@ -10,11 +10,11 @@ class Scanner(object):
         self.line = 1
         self.tokens = []
 
-    def is_at_end(self):
+    def _is_at_end(self):
         return self.current >= len(self.source)
 
     def scan_tokens(self):
-        while not self.is_at_end():
+        while not self._is_at_end():
             self.start = self.current
             self.scan_token()
         self.tokens.append(Token(TokenType.EOF, "", None, self.line))
@@ -24,25 +24,25 @@ class Scanner(object):
         text = self.source[self.start:self.current]
         self.tokens.append(Token(token_type, text, literal, self.line))
 
-    def advance(self):
+    def _advance(self):
         self.current += 1
         return self.source[self.current - 1]
 
     def match(self, expected):
-        if self.is_at_end() or self.source[self.current] != expected:
+        if self._is_at_end() or self.source[self.current] != expected:
             return False
         self.current += 1
         return True
 
-    def peek(self):
-        return '\0' if self.is_at_end() else self.source[self.current]
+    def _peek(self):
+        return '\0' if self._is_at_end() else self.source[self.current]
 
-    def peek_next(self):
+    def _peek_next(self):
         index = self.current + 1
         return self.source[index] if index < len(self.source) else '\0'
 
     def scan_token(self):
-        c = self.advance()
+        c = self._advance()
         if c == '(':
             self.add_token(TokenType.LEFT_PAREN)
         elif c == ')':
@@ -74,8 +74,8 @@ class Scanner(object):
         elif c == '/':
             if self.match('/'):
                 # comments go the end of the line
-                while self.peek() != '\n' and not self.is_at_end():
-                    self.advance()
+                while self._peek() != '\n' and not self._is_at_end():
+                    self._advance()
             else:
                 self.add_token(TokenType.SLASH)
         elif c in ' \r\t':
@@ -93,19 +93,19 @@ class Scanner(object):
             print("ERROR!! Unexpected character: '{}'".format(c))
 
     def string(self):
-        while self.peek() != '"' and not self.is_at_end():
-            if self.peek() == '\n':
+        while self._peek() != '"' and not self._is_at_end():
+            if self._peek() == '\n':
                 # multiline string!
                 self.line += 1
-            self.advance()
+            self._advance()
 
-        if self.is_at_end():
+        if self._is_at_end():
             # unterminated string!
             print("ERROR! unterminated string!")
             return
 
         # move past close of string
-        self.advance()
+        self._advance()
         text = self.source[self.start + 1:self.current - 1]
         self.add_token(TokenType.STRING, text)
 
@@ -119,17 +119,17 @@ class Scanner(object):
         return self._is_digit(c) or self._is_alpha(c)
 
     def number(self):
-        while self._is_digit(self.peek()):
-            self.advance()
-        if self.peek() == '.' and self._is_digit(self.peek_next()):
-            self.advance()
-        while self._is_digit(self.peek()):
-            self.advance()
+        while self._is_digit(self._peek()):
+            self._advance()
+        if self._peek() == '.' and self._is_digit(self._peek_next()):
+            self._advance()
+        while self._is_digit(self._peek()):
+            self._advance()
         self.add_token(TokenType.NUMBER, float(self.source[self.start:self.current]))
 
     def identifier(self):
-        while self._is_alphanumeric(self.peek()):
-            self.advance()
+        while self._is_alphanumeric(self._peek()):
+            self._advance()
 
         text = self.source[self.start:self.current]
         if text in KEYWORDS:
