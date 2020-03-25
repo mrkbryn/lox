@@ -1,5 +1,5 @@
 from expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, Print, Expression, Var, Variable, Assign
-from scanner import TokenType
+from tokens import TokenType
 from exceptions import RuntimeException
 from environment import Environment
 

@@ -1,77 +1,4 @@
-from enum import Enum, auto
-
-
-class TokenType(Enum):
-    LEFT_PAREN = auto()
-    RIGHT_PAREN = auto()
-    LEFT_BRACE = auto()
-    RIGHT_BRACE = auto()
-    COMMA = auto()
-    DOT = auto()
-    MINUS = auto()
-    PLUS = auto()
-    SEMICOLON = auto()
-    SLASH = auto()
-    STAR = auto()
-    BANG = auto()
-    BANG_EQUAL = auto()
-    EQUAL = auto()
-    EQUAL_EQUAL = auto()
-    GREATER = auto()
-    GREATER_EQUAL = auto()
-    LESS = auto()
-    LESS_EQUAL = auto()
-    IDENTIFIER = auto()
-    STRING = auto()
-    NUMBER = auto()
-    AND = auto()
-    CLASS = auto()
-    ELSE = auto()
-    FALSE = auto()
-    FUN = auto()
-    FOR = auto()
-    IF = auto()
-    NIL = auto()
-    OR = auto()
-    PRINT = auto()
-    RETURN = auto()
-    SUPER = auto()
-    THIS = auto()
-    TRUE = auto()
-    VAR = auto()
-    WHILE = auto()
-    EOF = auto()
-
-
-KEYWORDS = {
-    "and": TokenType.AND,
-    "class": TokenType.CLASS,
-    "else": TokenType.ELSE,
-    "false": TokenType.FALSE,
-    "for": TokenType.FOR,
-    "fun": TokenType.FUN,
-    "if": TokenType.IF,
-    "nil": TokenType.NIL,
-    "or": TokenType.OR,
-    "print": TokenType.PRINT,
-    "return": TokenType.RETURN,
-    "super": TokenType.SUPER,
-    "this": TokenType.THIS,
-    "true": TokenType.TRUE,
-    "var": TokenType.VAR,
-    "while": TokenType.WHILE,
-}
-
-
-class Token(object):
-    def __init__(self, token_type, lexeme, literal, line):
-        self.token_type = token_type
-        self.lexeme = lexeme
-        self.literal = literal
-        self.line = line
-
-    def __repr__(self):
-        return "({} {} {})".format(self.token_type, self.lexeme, self.literal)
+from tokens import Token, TokenType, KEYWORDS
 
 
 class Scanner(object):
@@ -158,9 +85,9 @@ class Scanner(object):
             self.line += 1
         elif c == '"':
             self.string()
-        elif self.is_digit(c):
+        elif self._is_digit(c):
             self.number()
-        elif self.is_alpha(c):
+        elif self._is_alpha(c):
             self.identifier()
         else:
             print("ERROR!! Unexpected character: '{}'".format(c))
@@ -182,26 +109,26 @@ class Scanner(object):
         text = self.source[self.start + 1:self.current - 1]
         self.add_token(TokenType.STRING, text)
 
-    def is_digit(self, c):
+    def _is_digit(self, c):
         return c >= '0' and c <= '9'
 
-    def is_alpha(self, c):
+    def _is_alpha(self, c):
         return (c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or c == '_'
 
-    def is_alphanumeric(self, c):
-        return self.is_digit(c) or self.is_alpha(c)
+    def _is_alphanumeric(self, c):
+        return self._is_digit(c) or self._is_alpha(c)
 
     def number(self):
-        while self.is_digit(self.peek()):
+        while self._is_digit(self.peek()):
             self.advance()
-        if self.peek() == '.' and self.is_digit(self.peek_next()):
+        if self.peek() == '.' and self._is_digit(self.peek_next()):
             self.advance()
-        while self.is_digit(self.peek()):
+        while self._is_digit(self.peek()):
             self.advance()
         self.add_token(TokenType.NUMBER, float(self.source[self.start:self.current]))
 
     def identifier(self):
-        while self.is_alphanumeric(self.peek()):
+        while self._is_alphanumeric(self.peek()):
             self.advance()
 
         text = self.source[self.start:self.current]

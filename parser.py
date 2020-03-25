@@ -1,6 +1,6 @@
 from expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, Print, Expression, Var, Variable, Assign
-from scanner import Token, TokenType, Scanner
-from exceptions import RuntimeException
+from scanner import Scanner
+from tokens import Token, TokenType
 
 
 class Parser(object):

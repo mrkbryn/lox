@@ -1,5 +1,6 @@
 import unittest
-from scanner import Scanner, TokenType
+from tokens import TokenType
+from scanner import Scanner
 
 
 class TestScanner(unittest.TestCase):
