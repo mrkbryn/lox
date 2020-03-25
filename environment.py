@@ -8,7 +8,7 @@ class Environment(object):
 
     def define(self, name, value):
         if self.verbose:
-            print("ENV: defining var '{}' to {}".format(name, value))
+            print("ENV: defining var '{}' to be {}".format(name, value))
         self.values[name] = value
 
     def get(self, name):
