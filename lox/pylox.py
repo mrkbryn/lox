@@ -1,7 +1,7 @@
 import argparse
-from scanner import Scanner
-from parser import Parser
-from interpreter import Interpreter
+from lox.scanner import Scanner
+from lox.parser import Parser
+from lox.interpreter import Interpreter
 
 PYLOX_PROMPT = "> "
 

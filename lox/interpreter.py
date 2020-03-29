@@ -1,7 +1,7 @@
-from expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, Print, Expression, Var, Variable, Assign
-from tokens import TokenType
-from exceptions import RuntimeException
-from environment import Environment
+from lox.expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, Print, Expression, Var, Variable, Assign
+from lox.tokens import TokenType
+from lox.exceptions import RuntimeException
+from lox.environment import Environment
 
 
 class Interpreter(object):

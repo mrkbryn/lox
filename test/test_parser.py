@@ -1,7 +1,7 @@
 import unittest
-from parser import Parser
-from tokens import Token, TokenType
-from expressions import Expression, LiteralExpr, BinaryExpr
+from lox.parser import Parser
+from lox.tokens import Token, TokenType
+from lox.expressions import Expression, LiteralExpr, BinaryExpr, Print
 
 
 class TestParser(unittest.TestCase):
@@ -38,3 +38,19 @@ class TestParser(unittest.TestCase):
         self.assertEqual(expression.left.value, 10)
         self.assertEqual(expression.operator.token_type, TokenType.LESS_EQUAL)
         self.assertEqual(expression.right.value, 20)
+
+    def test_print_statement(self):
+        # print 20;
+        tokens = [
+            Token(TokenType.PRINT, "print", None, 0),
+            Token(TokenType.NUMBER, "20", 20.0, 0),
+            Token(TokenType.SEMICOLON, ";", None, 0),
+            Token(TokenType.EOF, "", None, 0),
+        ]
+        parser = Parser(tokens)
+        statements = parser.parse()
+        self.assertEqual(len(statements), 1, "Expected 1 statement")
+        self.assertTrue(isinstance(statements[0], Print))
+        expression = statements[0].expression
+        self.assertTrue(isinstance(expression, LiteralExpr))
+        self.assertEqual(expression.value, 20)

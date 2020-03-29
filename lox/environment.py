@@ -1,4 +1,4 @@
-from exceptions import RuntimeException
+from lox.exceptions import RuntimeException
 
 
 class Environment(object):

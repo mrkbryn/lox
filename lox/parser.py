@@ -1,6 +1,6 @@
-from expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, Print, Expression, Var, Variable, Assign
-from scanner import Scanner
-from tokens import Token, TokenType
+from lox.expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, Print, Expression, Var, Variable, Assign
+from lox.scanner import Scanner
+from lox.tokens import TokenType
 
 
 class Parser(object):
