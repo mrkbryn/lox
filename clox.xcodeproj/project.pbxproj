@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		4232930C2431797B00664726 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4232930B2431797B00664726 /* main.c */; };
+		4232931524317B0A00664726 /* chunk.c in Sources */ = {isa = PBXBuildFile; fileRef = 4232931424317B0A00664726 /* chunk.c */; };
+		4232931824317DB500664726 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 4232931724317DB500664726 /* memory.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +27,11 @@
 /* Begin PBXFileReference section */
 		423293082431797B00664726 /* clox */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = clox; sourceTree = BUILT_PRODUCTS_DIR; };
 		4232930B2431797B00664726 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		42329312243179BD00664726 /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
+		4232931324317AAE00664726 /* chunk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = chunk.h; sourceTree = "<group>"; };
+		4232931424317B0A00664726 /* chunk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = chunk.c; sourceTree = "<group>"; };
+		4232931624317B8B00664726 /* memory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
+		4232931724317DB500664726 /* memory.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = memory.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +65,11 @@
 			isa = PBXGroup;
 			children = (
 				4232930B2431797B00664726 /* main.c */,
+				42329312243179BD00664726 /* common.h */,
+				4232931324317AAE00664726 /* chunk.h */,
+				4232931424317B0A00664726 /* chunk.c */,
+				4232931624317B8B00664726 /* memory.h */,
+				4232931724317DB500664726 /* memory.c */,
 			);
 			path = clox;
 			sourceTree = "<group>";
@@ -120,6 +132,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4232930C2431797B00664726 /* main.c in Sources */,
+				4232931824317DB500664726 /* memory.c in Sources */,
+				4232931524317B0A00664726 /* chunk.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
