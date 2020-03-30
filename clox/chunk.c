@@ -36,6 +36,9 @@ void writeChunk(Chunk* chunk, uint8_t byte, int line) {
     }
     
     chunk->code[chunk->count] = byte;
+    
+    // TODO: Challenge! Use run-length encoding to compress storage of line number metdata. Naturally, many subsequent bytecode
+    // instructions will come from the same line.
     chunk->lines[chunk->count] = line;
     chunk->count++;
 }
