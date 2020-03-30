@@ -11,6 +11,7 @@
 		4232931524317B0A00664726 /* chunk.c in Sources */ = {isa = PBXBuildFile; fileRef = 4232931424317B0A00664726 /* chunk.c */; };
 		4232931824317DB500664726 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 4232931724317DB500664726 /* memory.c */; };
 		4232931B2431802500664726 /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 4232931A2431802500664726 /* debug.c */; };
+		4232931E2431828A00664726 /* value.c in Sources */ = {isa = PBXBuildFile; fileRef = 4232931D2431828900664726 /* value.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -35,6 +36,8 @@
 		4232931724317DB500664726 /* memory.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = memory.c; sourceTree = "<group>"; };
 		423293192431802500664726 /* debug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
 		4232931A2431802500664726 /* debug.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = debug.c; sourceTree = "<group>"; };
+		4232931C2431828900664726 /* value.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = value.h; sourceTree = "<group>"; };
+		4232931D2431828900664726 /* value.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = value.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +78,8 @@
 				4232931724317DB500664726 /* memory.c */,
 				423293192431802500664726 /* debug.h */,
 				4232931A2431802500664726 /* debug.c */,
+				4232931C2431828900664726 /* value.h */,
+				4232931D2431828900664726 /* value.c */,
 			);
 			path = clox;
 			sourceTree = "<group>";
@@ -136,6 +141,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4232931E2431828A00664726 /* value.c in Sources */,
 				4232930C2431797B00664726 /* main.c in Sources */,
 				4232931824317DB500664726 /* memory.c in Sources */,
 				4232931524317B0A00664726 /* chunk.c in Sources */,
