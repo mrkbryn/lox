@@ -12,6 +12,7 @@
 		4232931824317DB500664726 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 4232931724317DB500664726 /* memory.c */; };
 		4232931B2431802500664726 /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 4232931A2431802500664726 /* debug.c */; };
 		4232931E2431828A00664726 /* value.c in Sources */ = {isa = PBXBuildFile; fileRef = 4232931D2431828900664726 /* value.c */; };
+		42B8B39F2432D60B00C998CF /* vm.c in Sources */ = {isa = PBXBuildFile; fileRef = 42B8B39E2432D60B00C998CF /* vm.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -38,6 +39,8 @@
 		4232931A2431802500664726 /* debug.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = debug.c; sourceTree = "<group>"; };
 		4232931C2431828900664726 /* value.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = value.h; sourceTree = "<group>"; };
 		4232931D2431828900664726 /* value.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = value.c; sourceTree = "<group>"; };
+		42B8B39D2432D60B00C998CF /* vm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vm.h; sourceTree = "<group>"; };
+		42B8B39E2432D60B00C998CF /* vm.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = vm.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +83,8 @@
 				4232931A2431802500664726 /* debug.c */,
 				4232931C2431828900664726 /* value.h */,
 				4232931D2431828900664726 /* value.c */,
+				42B8B39D2432D60B00C998CF /* vm.h */,
+				42B8B39E2432D60B00C998CF /* vm.c */,
 			);
 			path = clox;
 			sourceTree = "<group>";
@@ -145,6 +150,7 @@
 				4232930C2431797B00664726 /* main.c in Sources */,
 				4232931824317DB500664726 /* memory.c in Sources */,
 				4232931524317B0A00664726 /* chunk.c in Sources */,
+				42B8B39F2432D60B00C998CF /* vm.c in Sources */,
 				4232931B2431802500664726 /* debug.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
