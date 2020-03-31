@@ -18,13 +18,34 @@ int main(int argc, const char * argv[]) {
     Chunk chunk;
     initChunk(&chunk);
     
+    // "compile" into the VM: -((1.2 + 3.4) / 5.6)
+    
+    // 1.2
     int constant = addConstant(&chunk, 1.2);
     writeChunk(&chunk, OP_CONSTANT, 10);
     writeChunk(&chunk, constant, 10);
-    writeChunk(&chunk, OP_NEGATE, 10);
-    writeChunk(&chunk, OP_RETURN, 10);
     
-//    disassembleChunk(&chunk, "test chunk");
+    // 3.4
+    constant = addConstant(&chunk, 3.4);
+    writeChunk(&chunk, OP_CONSTANT, 10);
+    writeChunk(&chunk, constant, 10);
+    
+    // 1.2 + 3.4
+    writeChunk(&chunk, OP_ADD, 10);
+    
+    // 5.6
+    constant = addConstant(&chunk, 5.6);
+    writeChunk(&chunk, OP_CONSTANT, 10);
+    writeChunk(&chunk, constant, 10);
+    
+    // divide the result
+    writeChunk(&chunk, OP_DIVIDE, 10);
+    
+    // negate the result
+    writeChunk(&chunk, OP_NEGATE, 10);
+    
+    // finally, return the result
+    writeChunk(&chunk, OP_RETURN, 10);
     
     interpret(&chunk);
     
