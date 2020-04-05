@@ -10,7 +10,9 @@
 #define compiler_h
 
 #include <stdio.h>
+#include <stdbool.h>
+#include "chunk.h"
 
-void compile(const char* source);
+bool compile(const char* source, Chunk* chunk);
 
 #endif /* compiler_h */
