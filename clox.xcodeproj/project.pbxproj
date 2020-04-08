@@ -15,6 +15,7 @@
 		42B8B39F2432D60B00C998CF /* vm.c in Sources */ = {isa = PBXBuildFile; fileRef = 42B8B39E2432D60B00C998CF /* vm.c */; };
 		42B8B3A22434314E00C998CF /* compiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 42B8B3A12434314E00C998CF /* compiler.c */; };
 		42B8B3A52434319500C998CF /* scanner.c in Sources */ = {isa = PBXBuildFile; fileRef = 42B8B3A42434319500C998CF /* scanner.c */; };
+		42B8B3A8243D4AF300C998CF /* object.c in Sources */ = {isa = PBXBuildFile; fileRef = 42B8B3A7243D4AF300C998CF /* object.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -47,6 +48,8 @@
 		42B8B3A12434314E00C998CF /* compiler.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = compiler.c; sourceTree = "<group>"; };
 		42B8B3A32434319500C998CF /* scanner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scanner.h; sourceTree = "<group>"; };
 		42B8B3A42434319500C998CF /* scanner.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scanner.c; sourceTree = "<group>"; };
+		42B8B3A6243D4AF300C998CF /* object.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = object.h; sourceTree = "<group>"; };
+		42B8B3A7243D4AF300C998CF /* object.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = object.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +98,8 @@
 				42B8B3A12434314E00C998CF /* compiler.c */,
 				42B8B3A32434319500C998CF /* scanner.h */,
 				42B8B3A42434319500C998CF /* scanner.c */,
+				42B8B3A6243D4AF300C998CF /* object.h */,
+				42B8B3A7243D4AF300C998CF /* object.c */,
 			);
 			path = clox;
 			sourceTree = "<group>";
@@ -159,6 +164,7 @@
 				4232931E2431828A00664726 /* value.c in Sources */,
 				4232930C2431797B00664726 /* main.c in Sources */,
 				4232931824317DB500664726 /* memory.c in Sources */,
+				42B8B3A8243D4AF300C998CF /* object.c in Sources */,
 				4232931524317B0A00664726 /* chunk.c in Sources */,
 				42B8B3A52434319500C998CF /* scanner.c in Sources */,
 				42B8B3A22434314E00C998CF /* compiler.c in Sources */,
