@@ -32,7 +32,13 @@ static ObjString* allocateString(char* chars, int length) {
     return string;
 }
 
+ObjString* takeString(char* chars, int length) {
+    // assume we own chars memory
+    return allocateString(chars, length);
+}
+
 ObjString* copyString(const char* chars, int length) {
+    // assume we don't own chars.. copy it into some new memory
     char* heapChars = ALLOCATE(char, length + 1);
     memcpy(heapChars, chars, length);
     heapChars[length] = '\0';

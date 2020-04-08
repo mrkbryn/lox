@@ -40,8 +40,8 @@ struct sObjString {
     char* chars;
 };
 
+ObjString* takeString(char* chars, int length);
 ObjString* copyString(const char* chars, int length);
-
 void printObject(Value value);
 
 static inline bool isObjType(Value value, ObjType type) {
