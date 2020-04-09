@@ -16,6 +16,7 @@
 		42B8B3A22434314E00C998CF /* compiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 42B8B3A12434314E00C998CF /* compiler.c */; };
 		42B8B3A52434319500C998CF /* scanner.c in Sources */ = {isa = PBXBuildFile; fileRef = 42B8B3A42434319500C998CF /* scanner.c */; };
 		42B8B3A8243D4AF300C998CF /* object.c in Sources */ = {isa = PBXBuildFile; fileRef = 42B8B3A7243D4AF300C998CF /* object.c */; };
+		42B8B3AC243EAEE400C998CF /* table.c in Sources */ = {isa = PBXBuildFile; fileRef = 42B8B3AB243EAEE400C998CF /* table.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -50,6 +51,8 @@
 		42B8B3A42434319500C998CF /* scanner.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scanner.c; sourceTree = "<group>"; };
 		42B8B3A6243D4AF300C998CF /* object.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = object.h; sourceTree = "<group>"; };
 		42B8B3A7243D4AF300C998CF /* object.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = object.c; sourceTree = "<group>"; };
+		42B8B3AA243EAEE400C998CF /* table.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = table.h; sourceTree = "<group>"; };
+		42B8B3AB243EAEE400C998CF /* table.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = table.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +103,8 @@
 				42B8B3A42434319500C998CF /* scanner.c */,
 				42B8B3A6243D4AF300C998CF /* object.h */,
 				42B8B3A7243D4AF300C998CF /* object.c */,
+				42B8B3AA243EAEE400C998CF /* table.h */,
+				42B8B3AB243EAEE400C998CF /* table.c */,
 			);
 			path = clox;
 			sourceTree = "<group>";
@@ -161,6 +166,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				42B8B3AC243EAEE400C998CF /* table.c in Sources */,
 				4232931E2431828A00664726 /* value.c in Sources */,
 				4232930C2431797B00664726 /* main.c in Sources */,
 				4232931824317DB500664726 /* memory.c in Sources */,
