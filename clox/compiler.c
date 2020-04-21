@@ -147,6 +147,18 @@ static void endCompiler() {
 
 // forward declarations to help with circular definitions
 static void parsePrecedence(Precedence precedence);
+
+static uint8_t identifierConstant(Token* name) {
+    // Creates a constant in the constant table and return the index
+    // of the constant.
+    return makeConstant(OBJ_VAL(copyString(name->start, name->length)));
+}
+
+static uint8_t parseVariable(const char* errorMessage){
+    consume(TOKEN_IDENTIFIER, errorMessage);
+    return identifierConstant(&parser.previous);
+}
+
 static void expression();
 static void statement();
 static void declaration();
@@ -202,6 +214,15 @@ static void string() {
     emitConstant(OBJ_VAL(copyString(parser.previous.start + 1, parser.previous.length - 2)));
 }
 
+static void namedVariable(Token name) {
+    uint8_t arg = identifierConstant(&name);
+    emitBytes(OP_GET_GLOBAL, arg);
+}
+
+static void variable() {
+    namedVariable(parser.previous);
+}
+
 static void unary() {
     TokenType operatorType = parser.previous.type;
     
@@ -237,7 +258,7 @@ ParseRule rules[] = {
   { NULL,     binary,  PREC_COMPARISON }, // TOKEN_GREATER_EQUAL
   { NULL,     binary,  PREC_COMPARISON }, // TOKEN_LESS
   { NULL,     binary,  PREC_COMPARISON }, // TOKEN_LESS_EQUAL
-  { NULL,     NULL,    PREC_NONE },       // TOKEN_IDENTIFIER
+  { variable, NULL,    PREC_NONE },       // TOKEN_IDENTIFIER
   { string,   NULL,    PREC_NONE },       // TOKEN_STRING
   { number,   NULL,    PREC_NONE },       // TOKEN_NUMBER
   { NULL,     NULL,    PREC_NONE },       // TOKEN_AND
@@ -277,6 +298,10 @@ static void parsePrecedence(Precedence precedence) {
     }
 }
 
+static void defineVariable(uint8_t global) {
+    emitBytes(OP_DEFINE_GLOBAL, global);
+}
+
 static ParseRule* getRule(TokenType type) {
     return &rules[type];
 }
@@ -285,19 +310,79 @@ static void expression() {
     parsePrecedence(PREC_ASSIGNMENT);
 }
 
+static void varDeclaration() {
+    uint8_t global = parseVariable("Expect variable name.");
+    
+    if (match(TOKEN_EQUAL)) {
+        // E.g. var x = 3 + 5;
+        expression();
+    } else {
+        // E.g. var x;
+        emitByte(OP_NIL);
+    }
+    consume(TOKEN_SEMICOLON, "Expect ';' after variable declaration.");
+    
+    defineVariable(global);
+}
+
+static void expressionStatement() {
+    expression();
+    consume(TOKEN_SEMICOLON, "Expect ';' after expression.");
+    emitByte(OP_POP);
+}
+
 static void printStatement() {
     expression();
     consume(TOKEN_SEMICOLON, "Expect ';' after value.");
     emitByte(OP_PRINT);
 }
 
+static void synchronize() {
+    // Reset the parser.
+    parser.panicMode = false;
+    
+    while (parser.current.type != TOKEN_EOF) {
+        // Skip tokens until we reach something that looks like
+        // a statement boundary.
+        if (parser.previous.type == TOKEN_SEMICOLON) return;
+        
+        switch (parser.current.type) {
+            case TOKEN_CLASS:
+            case TOKEN_FUN:
+            case TOKEN_VAR:
+            case TOKEN_FOR:
+            case TOKEN_IF:
+            case TOKEN_WHILE:
+            case TOKEN_PRINT:
+            case TOKEN_RETURN:
+                return;
+                
+            default:
+                // Do nothing.
+                break;
+        }
+        
+        advance();
+    }
+}
+
 static void declaration() {
-    statement();
+    if (match(TOKEN_VAR)) {
+        varDeclaration();
+    } else {
+        statement();
+    }
+    
+    if (parser.panicMode) {
+        synchronize();
+    }
 }
 
 static void statement() {
     if (match(TOKEN_PRINT)) {
         printStatement();
+    }  else {
+        expressionStatement();
     }
 }
 
