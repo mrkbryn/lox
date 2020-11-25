@@ -1,6 +1,6 @@
 //
 //  vm.h
-//  clox
+//  src
 //
 //  Created by Mark Bryan on 3/30/20.
 //  Copyright © 2020 Mark Bryan. All rights reserved.

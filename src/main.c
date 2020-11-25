@@ -1,6 +1,6 @@
 //
 //  main.c
-//  clox
+//  src
 //
 //  Created by Mark Bryan on 3/29/20.
 //  Copyright © 2020 Mark Bryan. All rights reserved.
@@ -75,7 +75,7 @@ int main(int argc, const char * argv[]) {
     } else if (argc == 2) {
         runFile(argv[1]);
     } else {
-        fprintf(stderr, "Usage: clox [path]\n");
+        fprintf(stderr, "Usage: src [path]\n");
         exit(64);
     }
     

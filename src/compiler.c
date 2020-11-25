@@ -1,6 +1,6 @@
 //
 //  compiler.c
-//  clox
+//  src
 //
 //  Created by Mark Bryan on 3/31/20.
 //  Copyright © 2020 Mark Bryan. All rights reserved.

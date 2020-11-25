@@ -1,6 +1,6 @@
 //
 //  table.h
-//  clox
+//  src
 //
 //  Created by Mark Bryan on 4/8/20.
 //  Copyright © 2020 Mark Bryan. All rights reserved.

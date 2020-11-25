@@ -1,6 +1,6 @@
 //
 //  object.c
-//  clox
+//  src
 //
 //  Created by Mark Bryan on 4/7/20.
 //  Copyright © 2020 Mark Bryan. All rights reserved.
