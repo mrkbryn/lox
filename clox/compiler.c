@@ -426,6 +426,10 @@ ParseRule rules[] = {
   { NULL,     NULL,    PREC_NONE },       // TOKEN_EOF
 };
 
+/*
+ Consumes the next token and applies the appropriate ParseRule
+ from the rules table.
+ */
 static void parsePrecedence(Precedence precedence) {
     advance();
     ParseFn prefixRule = getRule(parser.previous.type)->prefix;
@@ -434,6 +438,7 @@ static void parsePrecedence(Precedence precedence) {
         return;
     }
     
+    // Pass context to the ParseRule specifying we can assign.
     bool canAssign = precedence <= PREC_ASSIGNMENT;
     prefixRule(canAssign);
     
