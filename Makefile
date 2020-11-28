@@ -5,6 +5,7 @@ default: clox
 # Remove all build outputs and intermediate files.
 clean:
 	@ rm -rf $(BUILD_DIR)
+	@ rm clox
 
 # TODO: figure out testing structure.
 # Run the tests for clox against a debug version of clox.
