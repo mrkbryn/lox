@@ -1,2 +1,6 @@
 .idea
 cmake-build-debug
+
+# Ignore executable and build dirs
+clox
+build
