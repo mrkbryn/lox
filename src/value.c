@@ -6,8 +6,6 @@
 //  Copyright © 2020 Mark Bryan. All rights reserved.
 //
 
-#include <string.h>
-
 #include "value.h"
 #include "memory.h"
 #include "object.h"

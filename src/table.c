@@ -6,12 +6,10 @@
 //  Copyright © 2020 Mark Bryan. All rights reserved.
 //
 
-#include <stdlib.h>
 #include <string.h>
 
 #include "table.h"
 #include "memory.h"
-#include "table.h"
 #include "value.h"
 
 // Determines when to grow the array. Will grow when table is 75% full.

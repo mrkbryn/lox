@@ -6,8 +6,6 @@
 //  Copyright © 2020 Mark Bryan. All rights reserved.
 //
 
-#include <stdlib.h>
-
 #include "chunk.h"
 #include "memory.h"
 #include "value.h"
