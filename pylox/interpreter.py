@@ -1,13 +1,17 @@
-from lox.expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, Print, Expression, Var, Variable, Assign
-from lox.tokens import TokenType
-from lox.exceptions import RuntimeException
-from lox.environment import Environment
+import logging
+
+from pylox.expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, Print, Expression, Var, Variable, Assign
+from pylox.tokens import TokenType
+from pylox.exceptions import RuntimeException
+from pylox.environment import Environment
+
+logger = logging.getLogger("pylox.interpreter")
 
 
 class Interpreter(object):
     def __init__(self, verbose=False):
         self.verbose = verbose
-        self.environment = Environment(verbose=self.verbose)
+        self.environment = Environment()
 
     def interpret(self, statements):
         try:
@@ -114,7 +118,7 @@ class Interpreter(object):
         return value
 
     def execute(self, stmt):
-        stmt.accept(self)
+        return stmt.accept(self)
 
     def is_truthy(self, obj):
         if obj is None:

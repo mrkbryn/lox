@@ -1,12 +1,18 @@
 import argparse
-from lox.scanner import Scanner
-from lox.parser import Parser
-from lox.interpreter import Interpreter
+from pylox.scanner import Scanner
+from pylox.parser import Parser
+from pylox.interpreter import Interpreter
+
 
 PYLOX_PROMPT = "> "
 
 
 class PyLox(object):
+    """
+    Command-line runner to execute Lox source code. Provides an interface
+    to run as REPL prompt or on a pylox source file.
+    """
+
     def __init__(self, verbose=False):
         self.verbose = verbose
         self.interpreter = Interpreter(self.verbose)

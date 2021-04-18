@@ -1,14 +1,18 @@
-from lox.exceptions import RuntimeException
+import logging
+
+from pylox.exceptions import RuntimeException
+
+
+logger = logging.getLogger("pylox.environment")
 
 
 class Environment(object):
-    def __init__(self, verbose=False):
-        self.verbose = verbose
+    """Runtime environment which stores/updates named variables throughout the lifetime of a lox execution."""
+    def __init__(self):
         self.values = {}
 
     def define(self, name, value):
-        if self.verbose:
-            print("ENV: defining var '{}' to be {}".format(name, value))
+        logger.debug("Defining var '{}' := {}".format(name, value))
         self.values[name] = value
 
     def get(self, name):
@@ -24,9 +28,3 @@ class Environment(object):
 
     def __repr__(self):
         return "Environment({})".format(self.values)
-
-
-if __name__ == "__main__":
-    env = Environment()
-    env.define("x", 10)
-    print(env.get("x"))

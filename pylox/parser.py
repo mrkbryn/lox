@@ -1,6 +1,9 @@
-from lox.expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, Print, Expression, Var, Variable, Assign
-from lox.scanner import Scanner
-from lox.tokens import TokenType
+import logging
+
+from pylox.expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, Print, Expression, Var, Variable, Assign
+from pylox.tokens import TokenType
+
+logger = logging.getLogger("pylox.parser")
 
 
 class Parser(object):
@@ -153,12 +156,3 @@ class Parser(object):
             return GroupingExpr(expr)
         if self.match([TokenType.IDENTIFIER]):
             return Variable(self.previous())
-
-
-if __name__ == "__main__":
-    scanner = Scanner("1 + 2.0")
-    tokens = scanner.scan_tokens()
-    print(tokens)
-    parser = Parser(tokens)
-    statements = parser.parse()
-    print(statements)

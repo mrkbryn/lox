@@ -1,6 +1,6 @@
 import unittest
-from lox.tokens import TokenType
-from lox.scanner import Scanner
+from pylox.tokens import TokenType
+from pylox.scanner import Scanner
 
 
 class TestScanner(unittest.TestCase):

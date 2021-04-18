@@ -1,7 +1,7 @@
 import unittest
-from lox.parser import Parser
-from lox.tokens import Token, TokenType
-from lox.expressions import Expression, LiteralExpr, BinaryExpr, Print
+from pylox.parser import Parser
+from pylox.tokens import Token, TokenType
+from pylox.expressions import Expression, LiteralExpr, BinaryExpr, Print
 
 
 class TestParser(unittest.TestCase):
