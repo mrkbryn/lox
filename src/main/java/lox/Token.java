@@ -1,3 +1,5 @@
+package lox;
+
 public class Token {
     // TODO: include column and length information
 
