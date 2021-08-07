@@ -1,8 +1,0 @@
-lox/Lox.java
- lox.Lox
-lox/Scanner.java
- lox.Scanner
-lox/Token.java
- lox.Token
-lox/TokenType.java
- lox.TokenType
