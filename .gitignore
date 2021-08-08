@@ -4,3 +4,8 @@ clox/cmake-build-debug
 # Ignore executable and build dirs
 clox/clox
 clox/build
+
+*.class
+jlox/.gradle
+jlox/build
+jlox/.idea
