@@ -78,4 +78,13 @@ class InterpreterTest {
         assertEquals(true, eval("\"hello\" == \"hello\""));
         assertEquals(false, eval("\"hello\" == \"hellox\""));
     }
+
+    @Test
+    void testEquality() {
+        assertEquals(true, eval("nil == nil"));
+        assertEquals(false, eval("nil != nil"));
+        assertEquals(false, eval("5.0 == nil"));
+        assertEquals(true, eval("5.0 == 5.0"));
+        assertEquals(false, eval("5.0 == \"hello\""));
+    }
 }
