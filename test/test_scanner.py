@@ -1,4 +1,5 @@
 import unittest
+
 from pylox.tokens import TokenType
 from pylox.scanner import Scanner
 

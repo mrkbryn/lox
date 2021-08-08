@@ -15,7 +15,7 @@ class PyLox(object):
 
     def __init__(self, verbose=False):
         self.verbose = verbose
-        self.interpreter = Interpreter(self.verbose)
+        self.interpreter = Interpreter()
 
     def run_prompt(self):
         while True:
@@ -28,7 +28,7 @@ class PyLox(object):
             self.try_read_and_evaluate(source)
 
     def try_read_and_evaluate(self, source):
-        tokens = Scanner(source, verbose=self.verbose).scan_tokens()
+        tokens = Scanner(source).scan_tokens()
         if self.verbose:
             print(" tokens -> {}".format(tokens))
         parser = Parser(tokens)

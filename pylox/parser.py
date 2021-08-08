@@ -1,6 +1,7 @@
 import logging
 
-from pylox.expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, Print, Expression, Var, Variable, Assign
+from pylox.expressions import BinaryExpr, UnaryExpr, LiteralExpr, GroupingExpr, \
+    Print, Expression, Var, Variable, Assign
 from pylox.tokens import TokenType
 
 logger = logging.getLogger("pylox.parser")
@@ -12,147 +13,148 @@ class Parser(object):
         self.tokens = tokens
         self.current = 0
 
-    def advance(self):
-        if not self.is_at_end():
+    def _advance(self):
+        if not self._is_at_end():
             self.current += 1
-        return self.previous()
+        return self._previous()
 
-    def previous(self):
+    def _previous(self):
         return self.tokens[self.current - 1]
 
-    def is_at_end(self):
-        return self.peek().token_type == TokenType.EOF
+    def _is_at_end(self):
+        return self._peek().token_type == TokenType.EOF
 
-    def peek(self):
+    def _peek(self):
         return self.tokens[self.current]
 
-    def check(self, token_type):
-        if self.is_at_end():
+    def _check(self, token_type):
+        if self._is_at_end():
             return False
-        return self.peek().token_type == token_type
+        return self._peek().token_type == token_type
 
-    def match(self, token_types):
+    def _match(self, token_types):
         for t in token_types:
-            if self.check(t):
-                self.advance()
+            if self._check(t):
+                self._advance()
                 return True
         return False
 
-    def consume(self, token_type, message):
-        if self.check(token_type):
-            return self.advance()
-        self.error(self.peek(), message)
+    def _consume(self, token_type, message):
+        if self._check(token_type):
+            return self._advance()
+        self._error(self._peek(), message)
 
-    def error(self, token, message):
+    def _error(self, token, message):
         raise Exception(message)
 
     def parse(self):
         statements = []
-        while not self.is_at_end():
-            statements.append(self.declaration())
+        while not self._is_at_end():
+            statements.append(self._parse_declaration())
         return statements
 
-    def statement(self):
-        if self.match([TokenType.PRINT]):
-            return self.print_statement()
-        return self.expression_statement()
+    def _parse_statement(self):
+        if self._match([TokenType.PRINT]):
+            return self._parse_print_statement()
+        return self._parse_expression_statement()
 
-    def declaration(self):
+    def _parse_declaration(self):
         try:
-            if self.match([TokenType.VAR]):
-                return self.var_declaration()
-            return self.statement()
+            if self._match([TokenType.VAR]):
+                return self._parse_var_declaration()
+            return self._parse_statement()
         except Exception as e:
-            self.synchronize()
+            self._synchronize()
             return None
 
-    def var_declaration(self):
-        name = self.consume(TokenType.IDENTIFIER, "Expected variable name.")
-        if self.match([TokenType.EQUAL]):
-            initializer = self.expression()
-        self.consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
+    def _parse_var_declaration(self):
+        name = self._consume(TokenType.IDENTIFIER, "Expected variable name.")
+        if self._match([TokenType.EQUAL]):
+            initializer = self._parse_expression()
+        self._consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.")
         return Var(name, initializer)
 
-    def synchronize(self):
+    def _synchronize(self):
+        # TODO
         pass
 
-    def print_statement(self):
-        value = self.expression()
-        self.consume(TokenType.SEMICOLON, "Expect ';' after value.")
+    def _parse_print_statement(self):
+        value = self._parse_expression()
+        self._consume(TokenType.SEMICOLON, "Expect ';' after value.")
         return Print(value)
 
-    def expression_statement(self):
-        expr = self.expression()
-        self.consume(TokenType.SEMICOLON, "Expect ';' after expression.")
+    def _parse_expression_statement(self):
+        expr = self._parse_expression()
+        self._consume(TokenType.SEMICOLON, "Expect ';' after expression.")
         return Expression(expr)
 
-    def expression(self):
-        return self.assignment()
+    def _parse_expression(self):
+        return self._parse_assignment()
 
-    def assignment(self):
-        expr = self.equality()
+    def _parse_assignment(self):
+        expr = self._parse_equality()
 
-        if self.match([TokenType.EQUAL]):
-            equals = self.previous()
-            value = self.assignment()
+        if self._match([TokenType.EQUAL]):
+            equals = self._previous()
+            value = self._parse_assignment()
             if isinstance(expr, Variable):
                 name = expr.name
                 return Assign(name, value)
-            self.error(equals, "Invalid assignment target.")
+            self._error(equals, "Invalid assignment target.")
 
         return expr
 
-    def equality(self):
-        expr = self.comparison()
-        while self.match([TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL]):
-            operator = self.previous()
-            right = self.comparison()
+    def _parse_equality(self):
+        expr = self._parse_comparison()
+        while self._match([TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL]):
+            operator = self._previous()
+            right = self._parse_comparison()
             expr = BinaryExpr(expr, operator, right)
         return expr
 
-    def comparison(self):
-        expr = self.addition()
-        while self.match([TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL]):
-            operator = self.previous()
-            right = self.addition()
+    def _parse_comparison(self):
+        expr = self._parse_addition()
+        while self._match([TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL]):
+            operator = self._previous()
+            right = self._parse_addition()
             expr = BinaryExpr(expr, operator, right)
         return expr
 
-    def addition(self):
-        expr = self.multiplication()
-        while self.match([TokenType.MINUS, TokenType.PLUS]):
-            operator = self.previous()
-            right = self.multiplication()
+    def _parse_addition(self):
+        expr = self._parse_multiplication()
+        while self._match([TokenType.MINUS, TokenType.PLUS]):
+            operator = self._previous()
+            right = self._parse_multiplication()
             expr = BinaryExpr(expr, operator, right)
         return expr
 
-    def multiplication(self):
-        expr = self.unary()
-        while self.match([TokenType.SLASH, TokenType.STAR]):
-            operator = self.previous()
-            right = self.unary()
+    def _parse_multiplication(self):
+        expr = self._parse_unary()
+        while self._match([TokenType.SLASH, TokenType.STAR]):
+            operator = self._previous()
+            right = self._parse_unary()
             expr = BinaryExpr(expr, operator, right)
         return expr
 
-    def unary(self):
-        if self.match([TokenType.BANG, TokenType.MINUS]):
-            operator = self.previous()
-            right = self.unary()
+    def _parse_unary(self):
+        if self._match([TokenType.BANG, TokenType.MINUS]):
+            operator = self._previous()
+            right = self._parse_unary()
             return UnaryExpr(operator, right)
-        return self.primary()
+        return self._parse_primary()
 
-    def primary(self):
-        if self.match([TokenType.FALSE]):
+    def _parse_primary(self):
+        if self._match([TokenType.FALSE]):
             return LiteralExpr(False)
-        if self.match([TokenType.TRUE]):
+        if self._match([TokenType.TRUE]):
             return LiteralExpr(True)
-        if self.match([TokenType.NIL]):
+        if self._match([TokenType.NIL]):
             return LiteralExpr(None)
-        if self.match([TokenType.NUMBER, TokenType.STRING]):
-            return LiteralExpr(self.previous().literal)
-        if self.match([TokenType.LEFT_PAREN]):
-            expr = self.expression()
-            self.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
+        if self._match([TokenType.NUMBER, TokenType.STRING]):
+            return LiteralExpr(self._previous().literal)
+        if self._match([TokenType.LEFT_PAREN]):
+            expr = self._parse_expression()
+            self._consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.")
             return GroupingExpr(expr)
-        if self.match([TokenType.IDENTIFIER]):
-            return Variable(self.previous())
+        if self._match([TokenType.IDENTIFIER]):
+            return Variable(self._previous())

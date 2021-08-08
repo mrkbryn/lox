@@ -1,4 +1,0 @@
-var x = 5;
-print x;
-print x + 10.0;
-print "Hello, World!";

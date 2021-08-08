@@ -17,7 +17,7 @@ class Scanner(object):
         """Parses all tokens until EOF for the provided source code string."""
         while not self._is_at_end():
             self.start = self.current
-            self.scan_token()
+            self._scan_token()
         self.tokens.append(Token(TokenType.EOF, "", None, self.line))
         return self.tokens
 
@@ -45,7 +45,7 @@ class Scanner(object):
         index = self.current + 1
         return self.source[index] if index < len(self.source) else '\0'
 
-    def scan_token(self):
+    def _scan_token(self):
         c = self._advance()
         if c == '(':
             self._add_token(TokenType.LEFT_PAREN)
@@ -114,10 +114,10 @@ class Scanner(object):
         self._add_token(TokenType.STRING, text)
 
     def _is_digit(self, c):
-        return c >= '0' and c <= '9'
+        return '0' <= c <= '9'
 
     def _is_alpha(self, c):
-        return (c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or c == '_'
+        return ('a' <= c <= 'z') or ('A' <= c <= 'Z') or c == '_'
 
     def _is_alphanumeric(self, c):
         return self._is_digit(c) or self._is_alpha(c)

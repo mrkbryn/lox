@@ -1,4 +1,5 @@
 import unittest
+
 from pylox.parser import Parser
 from pylox.tokens import Token, TokenType
 from pylox.expressions import Expression, LiteralExpr, BinaryExpr, Print
