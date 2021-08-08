@@ -1,13 +1,15 @@
 package lox;
 
 public class Interpreter implements Expr.Visitor<Object> {
-    void interpret(Expr expression) {
+    Object interpret(Expr expression) {
         try {
             Object value = evaluate(expression);
             System.out.println(stringify(value));
+            return value;
         } catch (RuntimeError error) {
             Lox.runtimeError(error);
         }
+        return null;
     }
 
     @Override
