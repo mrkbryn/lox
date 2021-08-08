@@ -1,11 +1,17 @@
+# Clox
 clox/.idea
 clox/cmake-build-debug
-
-# Ignore executable and build dirs
 clox/clox
 clox/build
 
+# Jlox
 *.class
 jlox/.gradle
 jlox/build
 jlox/.idea
+
+# Plox
+plox/.idea
+plox/__pycache__/
+plox/venv/
+plox/dist/
