@@ -15,3 +15,5 @@ plox/.idea
 plox/__pycache__/
 plox/venv/
 plox/dist/
+
+.idea
