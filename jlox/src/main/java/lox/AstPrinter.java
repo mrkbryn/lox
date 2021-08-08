@@ -1,6 +1,8 @@
 package lox;
 
 public class AstPrinter implements Expr.Visitor<String> {
+    // TODO: implement Stmt.Visitor<String>
+
     String print(Expr expr) {
         return expr.accept(this);
     }
@@ -37,6 +39,12 @@ public class AstPrinter implements Expr.Visitor<String> {
         builder.append(")");
 
         return builder.toString();
+    }
+
+    @Override
+    public String visitVariableExpr(Expr.Variable expr) {
+        // TODO:
+        return "";
     }
 
     public static void main(String[] args) {
