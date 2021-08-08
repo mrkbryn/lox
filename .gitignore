@@ -1,6 +1,6 @@
-.idea
-cmake-build-debug
+clox/.idea
+clox/cmake-build-debug
 
 # Ignore executable and build dirs
-clox
-build
+clox/clox
+clox/build
