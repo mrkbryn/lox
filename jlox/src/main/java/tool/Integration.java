@@ -16,7 +16,7 @@ import java.util.List;
 public class Integration {
 
     public static void main(String[] args) {
-        List<String> fileNames = gatherTestFiles();
+        List<String> fileNames = gatherTestFiles("/Users/mabryan/code/lox/lox");
         for (String path : fileNames) {
             try {
                 runAndCheckExpected(path);
@@ -26,13 +26,15 @@ public class Integration {
         }
     }
 
-    static List<String> gatherTestFiles() {
-        File dir = new File("/Users/mabryan/code/lox/lox");
+    static List<String> gatherTestFiles(String dirPath) {
+        File dir = new File(dirPath);
         File[] files = dir.listFiles();
         List<String> paths = new ArrayList<>();
         for (File file : files) {
             if (file.isFile() && file.getName().endsWith(".lox")) {
                 paths.add(file.getAbsolutePath());
+            } else if (file.isDirectory()) {
+                paths.addAll(gatherTestFiles(file.getAbsolutePath()));
             }
         }
         return paths;
@@ -50,7 +52,9 @@ public class Integration {
             System.setErr(printStream);
 
             // Run Lox after updating System.out, System.err.
-            Lox.main(new String[]{ path });
+            byte[] bytes = Files.readAllBytes(Paths.get(path));
+            String contents = new String(bytes, Charset.defaultCharset());
+            Lox.run(contents);
 
             // Store the System.out, System.err result.
             result = byteArrayOutputStream.toString(StandardCharsets.UTF_8.name());
@@ -69,13 +73,14 @@ public class Integration {
         if (expected.equals(output)) {
             System.out.println("PASSED: " + path);
         } else {
-            System.err.println("ERROR: " + path);
+            System.out.println("ERROR: " + path);
             System.out.println("> Expected: \n" + expected);
             System.out.println("> Output: \n" + output);
         }
     }
 
     static String getExpectedResult(String path) throws IOException {
+        // TODO: handle line errors.
         byte[] bytes = Files.readAllBytes(Paths.get(path));
         String contents = new String(bytes, Charset.defaultCharset());
 
