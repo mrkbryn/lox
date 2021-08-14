@@ -1,0 +1,7 @@
+# Rlox
+
+Building:
+
+```
+cargo build
+```
