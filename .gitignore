@@ -17,3 +17,8 @@ plox/venv/
 plox/dist/
 
 .idea
+
+# Rlox
+rlox/target
+rlox/debug
+
