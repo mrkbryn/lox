@@ -3,6 +3,11 @@ package lox;
 public class AstPrinter implements Expr.Visitor<String> {
     // TODO: implement Stmt.Visitor<String>
 
+    @Override
+    public String visitCallExpr(Expr.Call expr) {
+        return "";
+    }
+
     String print(Expr expr) {
         return expr.accept(this);
     }
