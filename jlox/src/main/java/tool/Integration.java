@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Integration {
+    static int passCount = 0;
+    static int failCount = 0;
 
     public static void main(String[] args) {
         List<String> fileNames = gatherTestFiles("/Users/mabryan/code/lox/lox");
@@ -24,6 +26,8 @@ public class Integration {
                 System.out.println("Failed to run " + path);
             }
         }
+
+        System.out.println(passCount + " passed, " + failCount + " failed.");
     }
 
     static List<String> gatherTestFiles(String dirPath) {
@@ -72,10 +76,12 @@ public class Integration {
     static void compareResults(String path, String output, String expected) {
         if (expected.equals(output)) {
             System.out.println("PASSED: " + path);
+            passCount += 1;
         } else {
-            System.out.println("ERROR: " + path);
+            System.out.println("FAILED: " + path);
             System.out.println("> Expected: \n" + expected);
             System.out.println("> Output: \n" + output);
+            failCount += 1;
         }
     }
 
