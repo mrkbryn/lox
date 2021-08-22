@@ -61,6 +61,16 @@ public class AstPrinter implements Expr.Visitor<String> {
         return parenthesize(expr.operator.lexeme, expr.left, expr.right);
     }
 
+    @Override
+    public String visitGetExpr(Expr.Get expr) {
+        return "";
+    }
+
+    @Override
+    public String visitSetExpr(Expr.Set expr) {
+        return "";
+    }
+
     public static void main(String[] args) {
         Expr expression = new Expr.Binary(
                 new Expr.Unary(
