@@ -71,6 +71,11 @@ public class AstPrinter implements Expr.Visitor<String> {
         return "";
     }
 
+    @Override
+    public String visitThisExpr(Expr.This expr) {
+        return "this";
+    }
+
     public static void main(String[] args) {
         Expr expression = new Expr.Binary(
                 new Expr.Unary(
