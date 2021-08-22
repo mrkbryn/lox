@@ -21,3 +21,10 @@ test {
 application {
     mainClass = 'lox.Lox'
 }
+
+task(generateAst, dependsOn: 'classes', type: JavaExec) {
+    description 'Runs the GenerateAst script to output the Java AST files for Expr, Stmt.'
+    main = 'tool.GenerateAst'
+    classpath = sourceSets.main.runtimeClasspath
+    args 'src/main/java/lox'
+}

@@ -1,7 +1,13 @@
 # Jlox
 
-Running Lox scripts:
+Rebuild AST files for the Parser and Interpreter.
 
+```shell
+$ gradle generateAst
 ```
-gradle run --args="../lox/function/recursion.lox"
+
+Run an input Lox script.
+
+```shell
+$ gradle run --args="../lox/function/recursion.lox"
 ```
