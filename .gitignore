@@ -22,3 +22,7 @@ plox/dist/
 rlox/target
 rlox/debug
 
+# Klox
+klox/build
+klox/.idea
+klox/.gradle
