@@ -4,8 +4,13 @@ Various implementations of Robert Nystrom's Lox language from [Crafting Interpre
 
 ## Implementations
 
-In the project subdirectories, there are implementations of the Lox language in a few different languages:
+In the project subdirectories, there are implementations of the Lox language in a few different languages.
 
+*Tree-Walk Interpreters:*
 * Java : jlox
-* C : clox
 * Python : plox
+* Kotlin : klox
+
+*Bytecode Virtual Machines:*
+* C : clox
+
