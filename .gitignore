@@ -1,3 +1,5 @@
+.gradle
+
 # Clox
 clox/.idea
 clox/cmake-build-debug
