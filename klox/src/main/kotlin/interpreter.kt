@@ -2,7 +2,7 @@ package com.mab.lox
 
 import com.mab.lox.TokenType.*
 
-class Interpreter : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
+class Interpreter(val environment: Environment = Environment()) : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
 
     fun interpret(statements: List<Stmt>) {
         try {
@@ -84,6 +84,14 @@ class Interpreter : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
         }
     }
 
+    override fun visitVariableExpr(expr: Expr.Variable): Any? {
+        return lookUpVariable(expr.name, expr)
+    }
+
+    private fun lookUpVariable(name: Token, expr: Expr): Any? {
+        return environment.get(name)
+    }
+
     private fun isEqual(a: Any?, b: Any?): Boolean {
         if (a == null && b == null) return true
         if (a == null) return false
@@ -117,6 +125,12 @@ class Interpreter : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
 
     override fun visitExpressionStmt(stmt: Stmt.Expression): Void? {
         evaluate(stmt.expression)
+        return null
+    }
+
+    override fun visitVarStmt(stmt: Stmt.Var): Void? {
+        val value: Any? = if (stmt.initializer != null) evaluate(stmt.initializer) else null
+        environment.define(stmt.name.lexeme, value)
         return null
     }
 }

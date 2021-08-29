@@ -23,12 +23,13 @@ fun main(args: Array<String>) {
 //        "Set        | val obj: Expr, val name: Token, val value: Expr",
 //        "Super      | val keyword: Token, val method: Token",
 //        "This       | val keyword: Token",
-//        "Variable   | val name: Token",
+        "Variable   | val name: Token",
         "Unary      | val operator: Token, val right: Expr",
     ))
 
     defineAst(outputDir, "Stmt", listOf(
         "Expression | val expression: Expr",
+        "Var        | val name: Token, val initializer: Expr?",
         "Print      | val expression: Expr",
     ))
 }

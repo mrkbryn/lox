@@ -58,12 +58,19 @@ class Parser(val tokens: List<Token>) {
         try {
             if (match(CLASS)) return null  // TODO
             if (match(FUN)) return null  // TODO
-            if (match(VAR)) return null  // TODO
+            if (match(VAR)) return varDeclaration()
             return statement()
         } catch (error: ParseError) {
             synchronize()
             return null
         }
+    }
+
+    private fun varDeclaration(): Stmt {
+        val name = consume(IDENTIFIER, "Expect variable name.")
+        val initializer: Expr? = if (match(EQUAL)) expression() else null
+        consume(SEMICOLON, "Expect ';' after variable declaration.")
+        return Stmt.Var(name, initializer)
     }
 
     private fun statement(): Stmt? {
@@ -207,7 +214,10 @@ class Parser(val tokens: List<Token>) {
 
         // TODO SUPER
         // TODO THIS
-        // TODO IDENTIFIER
+
+        if (match(IDENTIFIER)) {
+            return Expr.Variable(previous())
+        }
 
         if (match(LEFT_PAREN)) {
             val expr = expression()
