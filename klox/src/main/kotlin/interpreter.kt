@@ -56,6 +56,18 @@ class Interpreter : Expr.Visitor<Any?> {
         return expr.value
     }
 
+    override fun visitLogicalExpr(expr: Expr.Logical): Any? {
+        val left = evaluate(expr.left)
+
+        if (expr.operator.type == OR) {
+            if (isTruthy(left)) return left
+        } else {
+            if (!isTruthy(left)) return left
+        }
+
+        return evaluate(expr.right)
+    }
+
     override fun visitUnaryExpr(expr: Expr.Unary): Any? {
         val right = evaluate(expr.right)
         when (expr.operator.type) {
@@ -95,5 +107,4 @@ class Interpreter : Expr.Visitor<Any?> {
 
         return obj.toString()
     }
-
 }

@@ -60,11 +60,11 @@ class Parser(val tokens: List<Token>) {
     private fun or(): Expr {
         var expr = and()
 
-//        while (match(OR)) {
-//            val operator = previous()
-//            val right = and()
-//            expr = Expr.Logical(expr, operator, right)
-//        }
+        while (match(OR)) {
+            val operator = previous()
+            val right = and()
+            expr = Expr.Logical(expr, operator, right)
+        }
 
         return expr
     }
@@ -72,11 +72,11 @@ class Parser(val tokens: List<Token>) {
     private fun and(): Expr {
         var expr = equality()
 
-//        while (match(AND)) {
-//            val operator = previous()
-//            val right = equality()
-//            expr = Expr.Logical(expr, operator, right)
-//        }
+        while (match(AND)) {
+            val operator = previous()
+            val right = equality()
+            expr = Expr.Logical(expr, operator, right)
+        }
 
         return expr
     }
