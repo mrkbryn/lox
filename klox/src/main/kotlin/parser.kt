@@ -43,8 +43,50 @@ class Parser(val tokens: List<Token>) {
         return ParseError()
     }
 
-    fun parse(): Expr {
-        return expression()
+    fun parse(): List<Stmt> {
+        val statements = ArrayList<Stmt>()
+        while (!isAtEnd()) {
+            val stmt = declaration()
+            if (stmt != null) {
+                statements.add(stmt)
+            }
+        }
+        return statements
+    }
+
+    private fun declaration(): Stmt? {
+        try {
+            if (match(CLASS)) return null  // TODO
+            if (match(FUN)) return null  // TODO
+            if (match(VAR)) return null  // TODO
+            return statement()
+        } catch (error: ParseError) {
+            synchronize()
+            return null
+        }
+    }
+
+    private fun statement(): Stmt? {
+        if (match(FOR)) return null
+        if (match(IF)) return null
+        if (match(PRINT)) return printStatement()
+        if (match(RETURN)) return null
+        if (match(WHILE)) return null
+        if (match(LEFT_BRACE)) return null
+        return expressionStatement()
+    }
+
+    private fun printStatement(): Stmt {
+        val value = expression()
+        consume(SEMICOLON, "Expect ';' after value.")
+        return Stmt.Print(value)
+    }
+
+    private fun expressionStatement(): Stmt? {
+        val expr = expression()
+        consume(SEMICOLON, "Expect ';' after expression.")
+        return null
+//        return Stmt.Expression(expr)
     }
 
     private fun expression(): Expr {
@@ -174,5 +216,17 @@ class Parser(val tokens: List<Token>) {
         }
 
         throw error(peek(), "Expect expression.")
+    }
+
+    private fun synchronize() {
+        advance()
+        while (!isAtEnd()) {
+            if (previous().type == SEMICOLON) return
+
+            when (peek().type) {
+                CLASS, FOR, FUN, IF, PRINT, RETURN, VAR, WHILE -> return
+                else -> advance()
+            }
+        }
     }
 }

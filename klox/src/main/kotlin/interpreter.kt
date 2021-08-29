@@ -2,20 +2,21 @@ package com.mab.lox
 
 import com.mab.lox.TokenType.*
 
-class Interpreter : Expr.Visitor<Any?> {
+class Interpreter : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
 
-    fun interpret(expression: Expr): Any? {
+    fun interpret(statements: List<Stmt>) {
         try {
-            val value = evaluate(expression)
-            println(stringify(value))
-            return value
+            statements.forEach {
+                execute(it)
+            }
         } catch (error: RuntimeError) {
             println("Runtime error!")
         }
-        return null
     }
 
     private fun evaluate(expr: Expr) = expr.accept(this)
+
+    private fun execute(stmt: Stmt) = stmt.accept(this)
 
     override fun visitBinaryExpr(expr: Expr.Binary): Any? {
         val left = evaluate(expr.left)
@@ -106,5 +107,16 @@ class Interpreter : Expr.Visitor<Any?> {
         }
 
         return obj.toString()
+    }
+
+    override fun visitPrintStmt(stmt: Stmt.Print): Void? {
+        val value = evaluate(stmt.expression)
+        println(stringify(value))
+        return null
+    }
+
+    override fun visitExpressionStmt(stmt: Stmt.Expression): Void? {
+        evaluate(stmt.expression)
+        return null
     }
 }
