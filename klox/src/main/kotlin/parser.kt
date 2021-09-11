@@ -58,14 +58,54 @@ class Parser(val tokens: List<Token>) {
     private fun declaration(): Stmt? {
         // declaration -> classDecl | funDecl | varDecl | statement ;
         try {
-            if (match(CLASS)) return null  // TODO
-            if (match(FUN)) return null  // TODO
+            if (match(CLASS)) return classDeclaration()
+            if (match(FUN)) return function("function")
             if (match(VAR)) return varDeclaration()
             return statement()
         } catch (error: ParseError) {
             synchronize()
             return null
         }
+    }
+
+    private fun classDeclaration(): Stmt {
+        // classDecl -> "class" IDENTIFIER ( "<" IDENTIFIER )? "{" function* "}" ;
+        val name = consume(IDENTIFIER, "Expect class name.")
+
+        // Parse optional superclass.
+        var superclass: Expr.Variable? = null
+        if (match(LESS)) {
+            consume(IDENTIFIER, "Expect superclass name.")
+            superclass = Expr.Variable(previous())
+        }
+
+        // Parse class body.
+        consume(LEFT_BRACE, "Expect '{' before class body.")
+        val methods = ArrayList<Stmt.Function>()
+        while (!check(RIGHT_BRACE) && !isAtEnd()) {
+            methods.add(function("method"))
+        }
+        consume(RIGHT_BRACE, "Expect '}' after class body.")
+
+        return Stmt.Class(name, superclass, methods)
+    }
+
+    private fun function(kind: String): Stmt.Function {
+        val name = consume(IDENTIFIER, "Expect $kind name.")
+        consume(LEFT_PAREN, "Expect '(' after $kind name.")
+        val parameters = ArrayList<Token>()
+        if (!check(RIGHT_PAREN)) {
+            do {
+                if (parameters.size >= 255) {
+                    error(peek(), "Can't have more than 255 parameters.")
+                }
+                parameters.add(consume(IDENTIFIER, "Expect parameter name."))
+            } while (match(COMMA))
+        }
+        consume(RIGHT_PAREN, "Expect ')' after parameters.")
+        consume(LEFT_BRACE, "Expect '{' before $kind body.")
+        val body = block()
+        return Stmt.Function(name, parameters, body)
     }
 
     private fun varDeclaration(): Stmt {
@@ -270,8 +310,33 @@ class Parser(val tokens: List<Token>) {
     }
 
     private fun call(): Expr {
-        val expr = primary()
+        var expr = primary()
+
+        while (true) {
+            if (match(LEFT_PAREN)) {
+                expr = finishCall(expr)
+            } else if (match(DOT)) {
+                val name = consume(IDENTIFIER, "Expect property name after '.'.")
+            } else {
+                break
+            }
+        }
+
         return expr
+    }
+
+    private fun finishCall(callee: Expr): Expr {
+        val arguments = ArrayList<Expr>()
+        if (!check(RIGHT_PAREN)) {
+            do {
+                if (arguments.size >= 255) {
+                    error(peek(), "Can't have more than 255 arguments.")
+                }
+                arguments.add(expression())
+            } while (match(COMMA))
+        }
+        val paren = consume(RIGHT_PAREN, "Expect ')' after arguments.")
+        return Expr.Call(callee, paren, arguments)
     }
 
     private fun primary(): Expr {
@@ -289,8 +354,14 @@ class Parser(val tokens: List<Token>) {
             return Expr.Literal(previous().literal)
         }
 
-        // TODO SUPER
-        // TODO THIS
+        if (match(SUPER)) {
+            val keyword = previous()
+            consume(DOT, "Expect '.' after 'super'.")
+            val method = consume(IDENTIFIER, "Expect superclass method name.")
+            return Expr.Super(keyword, method)
+        }
+
+        if (match(THIS)) return Expr.This(previous())
 
         if (match(IDENTIFIER)) {
             return Expr.Variable(previous())
