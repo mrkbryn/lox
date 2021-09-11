@@ -1,6 +1,7 @@
 package com.mab.lox
 
 import com.mab.lox.TokenType.*
+import kotlin.collections.ArrayList
 
 class ParseError : RuntimeException()
 
@@ -55,6 +56,7 @@ class Parser(val tokens: List<Token>) {
     }
 
     private fun declaration(): Stmt? {
+        // declaration -> classDecl | funDecl | varDecl | statement ;
         try {
             if (match(CLASS)) return null  // TODO
             if (match(FUN)) return null  // TODO
@@ -73,14 +75,56 @@ class Parser(val tokens: List<Token>) {
         return Stmt.Var(name, initializer)
     }
 
-    private fun statement(): Stmt? {
-        if (match(FOR)) return null
-        if (match(IF)) return null
+    private fun statement(): Stmt {
+        if (match(FOR)) return forStatement()
+        if (match(IF)) return ifStatement()
         if (match(PRINT)) return printStatement()
-        if (match(RETURN)) return null
-        if (match(WHILE)) return null
-        if (match(LEFT_BRACE)) return null
+        if (match(RETURN)) return returnStatement()
+        if (match(WHILE)) return whileStatement()
+        if (match(LEFT_BRACE)) return Stmt.Block(block())
         return expressionStatement()
+    }
+
+    private fun forStatement(): Stmt {
+        consume(LEFT_PAREN, "Expect '(' after 'for'.")
+
+        val initializer: Stmt?
+        if (match(SEMICOLON)) {
+            initializer = null
+        } else if (match(VAR)) {
+            initializer = varDeclaration()
+        } else {
+            initializer = expressionStatement()
+        }
+
+        var condition = if (!check(SEMICOLON)) expression() else null
+        consume(SEMICOLON, "Expect ';' after loop condition.")
+
+        val increment = if (!check(RIGHT_PAREN)) expression() else null
+        consume(RIGHT_PAREN, "Expect ')' after for clauses.")
+
+        // Desugar into while loop.
+        var body = statement()
+        if (increment != null) {
+            body = Stmt.Block(listOf(body, Stmt.Expression(increment)))
+        }
+
+        if (condition == null) {
+            condition = Expr.Literal(true)
+        }
+        body = Stmt.While(condition, body)
+
+        return body
+    }
+
+    private fun ifStatement(): Stmt {
+        consume(LEFT_PAREN, "Expect '(' after 'if'.")
+        val condition = expression()
+        consume(RIGHT_PAREN, "Expect ')' after if condition.")
+
+        val thenBranch = statement()
+        val elseBranch = if (match(ELSE)) statement() else null
+        return Stmt.If(condition, thenBranch, elseBranch)
     }
 
     private fun printStatement(): Stmt {
@@ -89,19 +133,52 @@ class Parser(val tokens: List<Token>) {
         return Stmt.Print(value)
     }
 
-    private fun expressionStatement(): Stmt? {
+    private fun returnStatement(): Stmt {
+        val keyword = previous()
+        val value = if (!check(SEMICOLON)) expression() else null
+        consume(SEMICOLON, "Expect ';' after return value.")
+//        return Stmt.Return(keyword, value)
+        TODO("Not implemented!")
+    }
+
+    private fun whileStatement(): Stmt {
+        consume(LEFT_PAREN, "Expect '(' after 'while'.")
+        val condition = expression()
+        consume(RIGHT_PAREN, "Expect ')' after condition.")
+        val body = statement()
+        return Stmt.While(condition, body)
+    }
+
+    private fun expressionStatement(): Stmt {
         val expr = expression()
         consume(SEMICOLON, "Expect ';' after expression.")
-        return null
-//        return Stmt.Expression(expr)
+        return Stmt.Expression(expr)
     }
 
     private fun expression(): Expr {
         return assignment()
     }
 
+    private fun block(): List<Stmt> {
+        val statements = ArrayList<Stmt>()
+        while (!check(RIGHT_BRACE) && !isAtEnd()) {
+            declaration()?.let { statements.add(it) }
+        }
+        consume(RIGHT_BRACE, "Expect '}' after block.")
+        return statements
+    }
+
     private fun assignment(): Expr {
         val expr = or()
+
+        if (match(EQUAL)) {
+            val equals = previous()
+            val value = assignment()
+            when (expr) {
+                is Expr.Variable -> return Expr.Assign(expr.name, value)
+                else -> error(equals, "Invalid assignment target.")
+            }
+        }
 
         return expr
     }

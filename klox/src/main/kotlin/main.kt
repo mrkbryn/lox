@@ -32,7 +32,7 @@ class Lox {
             interpreter.interpret(statements)
         }
 
-        fun report(line: Int, where: String, message: String) {
+        private fun report(line: Int, where: String, message: String) {
             System.err.println("[line $line] Error$where: $message")
             hadError = true
         }
@@ -45,6 +45,11 @@ class Lox {
             } else {
                 report(token.line, " at '${token.lexeme}'", message)
             }
+        }
+
+        fun runtimeError(error: RuntimeError) {
+            System.err.println("${error.message} \n[line ${error.token.line}]")
+            hadRuntimeError = true
         }
     }
 }

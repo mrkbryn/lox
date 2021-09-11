@@ -2,7 +2,14 @@ package com.mab.lox
 
 import com.mab.lox.TokenType.*
 
-class Interpreter(val environment: Environment = Environment()) : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
+class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
+    val globals: Environment
+    val locals: Map<Expr, Int>
+
+    init {
+        globals = Environment()
+        locals = HashMap()
+    }
 
     fun interpret(statements: List<Stmt>) {
         try {
@@ -10,13 +17,53 @@ class Interpreter(val environment: Environment = Environment()) : Expr.Visitor<A
                 execute(it)
             }
         } catch (error: RuntimeError) {
-            println("Runtime error!")
+            Lox.runtimeError(error)
         }
     }
 
     private fun evaluate(expr: Expr) = expr.accept(this)
 
     private fun execute(stmt: Stmt) = stmt.accept(this)
+
+    private fun executeBlock(statements: List<Stmt>, environment: Environment) {
+        val previous = this.environment
+        try {
+            this.environment = environment
+            statements.forEach {
+                execute(it)
+            }
+        } finally {
+            this.environment = previous
+        }
+    }
+
+    override fun visitAssignExpr(expr: Expr.Assign): Any? {
+        val value = evaluate(expr.value)
+        // TODO: implement locals
+        environment.assign(expr.name, value)
+        return value
+    }
+
+    override fun visitIfStmt(stmt: Stmt.If): Void? {
+        if (isTruthy(evaluate(stmt.condition))) {
+            execute(stmt.thenBranch)
+        } else if (stmt.elseBranch != null) {
+            execute(stmt.elseBranch)
+        }
+        return null
+    }
+
+    override fun visitBlockStmt(stmt: Stmt.Block): Void? {
+        executeBlock(stmt.statements, Environment(environment))
+        return null
+    }
+
+    override fun visitWhileStmt(stmt: Stmt.While): Void? {
+        while (isTruthy(evaluate(stmt.condition))) {
+            execute(stmt.body)
+        }
+        return null
+    }
 
     override fun visitBinaryExpr(expr: Expr.Binary): Any? {
         val left = evaluate(expr.left)
