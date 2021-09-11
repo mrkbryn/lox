@@ -9,6 +9,26 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
     init {
         globals = Environment()
         locals = HashMap()
+        registerBuiltInFunctions()
+    }
+
+    private fun registerBuiltInFunctions() {
+        globals.define("clock", object : LoxCallable {
+            override fun arity(): Int = 0
+            override fun call(interpreter: Interpreter?, arguments: List<Any?>?): Any? = System.currentTimeMillis().toDouble() / 1000.0;
+        })
+        globals.define("exit", object : LoxCallable {
+            override fun arity(): Int = 1
+            override fun call(interpreter: Interpreter?, arguments: List<Any?>?): Any? = System.exit(arguments?.get(0) as Int)
+        })
+        globals.define("print", object : LoxCallable {
+            override fun arity(): Int = 1
+            override fun call(interpreter: Interpreter?, arguments: List<Any?>?): Any? = println(arguments?.get(0))
+        })
+        globals.define("printerr", object : LoxCallable {
+            override fun arity(): Int = 1
+            override fun call(interpreter: Interpreter?, arguments: List<Any?>?): Any? = System.err.println(arguments?.get(0))
+        })
     }
 
     fun interpret(statements: List<Stmt>) {
