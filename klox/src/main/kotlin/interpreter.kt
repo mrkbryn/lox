@@ -41,9 +41,42 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
         }
     }
 
+    private fun lookUpVariable(name: Token, expr: Expr): Any? {
+        return environment.get(name)
+    }
+
+    private fun isTruthy(obj: Any?): Boolean {
+        if (obj == null) return false
+        if (obj is Boolean) return obj
+        return true
+    }
+
+    private fun isEqual(a: Any?, b: Any?): Boolean {
+        if (a == null && b == null) return true
+        if (a == null) return false
+        return a.equals(b)
+    }
+
+    private fun stringify(obj: Any?): String {
+        if (obj == null) return "nil"
+        if (obj is Double) {
+            var text = obj.toString()
+            if (text.endsWith(".0")) {
+                text = text.substring(0, text.length - 2)
+            }
+            return text
+        }
+
+        return obj.toString()
+    }
+
     private fun evaluate(expr: Expr) = expr.accept(this)
 
     private fun execute(stmt: Stmt) = stmt.accept(this)
+
+    private fun resolve(expr: Expr, depth: Int) {
+        TODO("Not yet implemented.")
+    }
 
     private fun executeBlock(statements: List<Stmt>, environment: Environment) {
         val previous = this.environment
@@ -57,44 +90,19 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
         }
     }
 
+    private fun checkNumberOperands(operator: Token, vararg operands: Any?) {
+        TODO("Not yet implemented.")
+    }
+
+    //
+    // Expr.Visitor Interface Implementation.
+    //
+
     override fun visitAssignExpr(expr: Expr.Assign): Any? {
         val value = evaluate(expr.value)
         // TODO: implement locals
         environment.assign(expr.name, value)
         return value
-    }
-
-    override fun visitIfStmt(stmt: Stmt.If): Void? {
-        if (isTruthy(evaluate(stmt.condition))) {
-            execute(stmt.thenBranch)
-        } else if (stmt.elseBranch != null) {
-            execute(stmt.elseBranch)
-        }
-        return null
-    }
-
-    override fun visitBlockStmt(stmt: Stmt.Block): Void? {
-        executeBlock(stmt.statements, Environment(environment))
-        return null
-    }
-
-    override fun visitWhileStmt(stmt: Stmt.While): Void? {
-        while (isTruthy(evaluate(stmt.condition))) {
-            execute(stmt.body)
-        }
-        return null
-    }
-
-    override fun visitClassStmt(stmt: Stmt.Class): Void? {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitFunctionStmt(stmt: Stmt.Function): Void? {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitReturnStmt(stmt: Stmt.Return): Void? {
-        TODO("Not yet implemented")
     }
 
     override fun visitBinaryExpr(expr: Expr.Binary): Any? {
@@ -128,13 +136,19 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
         }
     }
 
-    override fun visitGroupingExpr(expr: Expr.Grouping): Any? {
-        return evaluate(expr.expression)
+    override fun visitCallExpr(expr: Expr.Call): Any? {
+        TODO("Not yet implemented")
     }
 
-    override fun visitLiteralExpr(expr: Expr.Literal): Any? {
-        return expr.value
+    override fun visitGetExpr(expr: Expr.Get): Any? {
+        val obj = evaluate(expr.obj)
+        if (obj is LoxInstance) return obj.get(expr.name)
+        throw RuntimeError(expr.name, "Only instances have properties.")
     }
+
+    override fun visitGroupingExpr(expr: Expr.Grouping): Any? = evaluate(expr.expression)
+
+    override fun visitLiteralExpr(expr: Expr.Literal): Any? = expr.value
 
     override fun visitLogicalExpr(expr: Expr.Logical): Any? {
         val left = evaluate(expr.left)
@@ -146,6 +160,18 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
         }
 
         return evaluate(expr.right)
+    }
+
+    override fun visitSetExpr(expr: Expr.Set): Any? {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitSuperExpr(expr: Expr.Super): Any? {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitThisExpr(expr: Expr.This): Any? {
+        TODO("Not yet implemented")
     }
 
     override fun visitUnaryExpr(expr: Expr.Unary): Any? {
@@ -163,37 +189,37 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
         }
     }
 
-    override fun visitVariableExpr(expr: Expr.Variable): Any? {
-        return lookUpVariable(expr.name, expr)
+    override fun visitVariableExpr(expr: Expr.Variable): Any? = lookUpVariable(expr.name, expr)
+
+    //
+    // Stmt.Visitor Interface Implementation.
+    //
+
+    override fun visitBlockStmt(stmt: Stmt.Block): Void? {
+        executeBlock(stmt.statements, Environment(environment))
+        return null
     }
 
-    private fun lookUpVariable(name: Token, expr: Expr): Any? {
-        return environment.get(name)
+    override fun visitClassStmt(stmt: Stmt.Class): Void? {
+        TODO("Not yet implemented")
     }
 
-    private fun isEqual(a: Any?, b: Any?): Boolean {
-        if (a == null && b == null) return true
-        if (a == null) return false
-        return a.equals(b)
+    override fun visitExpressionStmt(stmt: Stmt.Expression): Void? {
+        evaluate(stmt.expression)
+        return null
     }
 
-    private fun isTruthy(obj: Any?): Boolean {
-        if (obj == null) return false
-        if (obj is Boolean) return obj
-        return true
+    override fun visitFunctionStmt(stmt: Stmt.Function): Void? {
+        TODO("Not yet implemented")
     }
 
-    private fun stringify(obj: Any?): String {
-        if (obj == null) return "nil"
-        if (obj is Double) {
-            var text = obj.toString()
-            if (text.endsWith(".0")) {
-                text = text.substring(0, text.length - 2)
-            }
-            return text
+    override fun visitIfStmt(stmt: Stmt.If): Void? {
+        if (isTruthy(evaluate(stmt.condition))) {
+            execute(stmt.thenBranch)
+        } else if (stmt.elseBranch != null) {
+            execute(stmt.elseBranch)
         }
-
-        return obj.toString()
+        return null
     }
 
     override fun visitPrintStmt(stmt: Stmt.Print): Void? {
@@ -202,9 +228,8 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
         return null
     }
 
-    override fun visitExpressionStmt(stmt: Stmt.Expression): Void? {
-        evaluate(stmt.expression)
-        return null
+    override fun visitReturnStmt(stmt: Stmt.Return): Void? {
+        TODO("Not yet implemented")
     }
 
     override fun visitVarStmt(stmt: Stmt.Var): Void? {
@@ -213,23 +238,10 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
         return null
     }
 
-    override fun visitCallExpr(expr: Expr.Call): Any? {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitGetExpr(expr: Expr.Get): Any? {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitSetExpr(expr: Expr.Set): Any? {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitSuperExpr(expr: Expr.Super): Any? {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitThisExpr(expr: Expr.This): Any? {
-        TODO("Not yet implemented")
+    override fun visitWhileStmt(stmt: Stmt.While): Void? {
+        while (isTruthy(evaluate(stmt.condition))) {
+            execute(stmt.body)
+        }
+        return null
     }
 }

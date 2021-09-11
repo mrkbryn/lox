@@ -116,6 +116,7 @@ class Parser(val tokens: List<Token>) {
     }
 
     private fun statement(): Stmt {
+        // statement -> ifStmt | printStmt | returnStmt | whileStmt | block | exprStmt ;
         if (match(FOR)) return forStatement()
         if (match(IF)) return ifStatement()
         if (match(PRINT)) return printStatement()
@@ -158,6 +159,7 @@ class Parser(val tokens: List<Token>) {
     }
 
     private fun ifStatement(): Stmt {
+        // ifStmt -> "if" "(" expression ")" statement ( "else" statement )? ;
         consume(LEFT_PAREN, "Expect '(' after 'if'.")
         val condition = expression()
         consume(RIGHT_PAREN, "Expect ')' after if condition.")
@@ -168,20 +170,22 @@ class Parser(val tokens: List<Token>) {
     }
 
     private fun printStatement(): Stmt {
+        // printStmt -> "print" expression
         val value = expression()
         consume(SEMICOLON, "Expect ';' after value.")
         return Stmt.Print(value)
     }
 
     private fun returnStatement(): Stmt {
+        // returnStmt -> "return" ( expression )? ;
         val keyword = previous()
         val value = if (!check(SEMICOLON)) expression() else null
         consume(SEMICOLON, "Expect ';' after return value.")
-//        return Stmt.Return(keyword, value)
-        TODO("Not implemented!")
+        return Stmt.Return(keyword, value)
     }
 
     private fun whileStatement(): Stmt {
+        // whileStmt -> "while" "(" expression ")" statement ;
         consume(LEFT_PAREN, "Expect '(' after 'while'.")
         val condition = expression()
         consume(RIGHT_PAREN, "Expect ')' after condition.")
@@ -190,16 +194,19 @@ class Parser(val tokens: List<Token>) {
     }
 
     private fun expressionStatement(): Stmt {
+        // expressionStmt -> expression ";" ;
         val expr = expression()
         consume(SEMICOLON, "Expect ';' after expression.")
         return Stmt.Expression(expr)
     }
 
     private fun expression(): Expr {
+        // expression -> assignment ;
         return assignment()
     }
 
     private fun block(): List<Stmt> {
+        // block -> "{" ( declaration )* "}" ;
         val statements = ArrayList<Stmt>()
         while (!check(RIGHT_BRACE) && !isAtEnd()) {
             declaration()?.let { statements.add(it) }
@@ -224,6 +231,7 @@ class Parser(val tokens: List<Token>) {
     }
 
     private fun or(): Expr {
+        // or -> and ( "or" and )*
         var expr = and()
 
         while (match(OR)) {
@@ -236,6 +244,7 @@ class Parser(val tokens: List<Token>) {
     }
 
     private fun and(): Expr {
+        // and -> equality ( "and" equality )*
         var expr = equality()
 
         while (match(AND)) {
@@ -248,7 +257,7 @@ class Parser(val tokens: List<Token>) {
     }
 
     private fun equality(): Expr {
-        // equality -> comparison ( ( "!=" | "==" comparison )* ;
+        // equality -> comparison ( ( "!=" | "==" ) comparison )* ;
         var expr = comparison()
 
         while (match(BANG_EQUAL, EQUAL_EQUAL)) {
