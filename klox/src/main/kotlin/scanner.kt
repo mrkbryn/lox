@@ -3,34 +3,24 @@ package com.mab.lox
 import com.mab.lox.TokenType.*
 
 class Scanner(val source: String) {
-    val tokens = ArrayList<Token>()
-    var start = 0
-    var current = 0
-    var line = 1
+    private val tokens = ArrayList<Token>()
+    private var start = 0
+    private var current = 0
+    private var line = 1
 
-    val keywords = mapOf(
-        "and" to AND,
-        "class" to CLASS,
-        "else" to ELSE,
-        "false" to FALSE,
-        "for" to FOR,
-        "fun" to FUN,
-        "if" to IF,
-        "nil" to NIL,
-        "or" to OR,
-        "print" to PRINT,
-        "return" to RETURN,
-        "super" to SUPER,
-        "this" to THIS,
-        "true" to TRUE,
-        "var" to VAR,
-        "while" to WHILE
+    private val keywords = mapOf(
+        "and" to AND, "class" to CLASS, "else" to ELSE, "false" to FALSE, "for" to FOR, "fun" to FUN, "if" to IF,
+        "nil" to NIL, "or" to OR, "print" to PRINT, "return" to RETURN, "super" to SUPER, "this" to THIS,
+        "true" to TRUE, "var" to VAR, "while" to WHILE
     )
 
     private fun isAtEnd() = current >= source.length
+
     private fun isAlpha(c: Char) = (c in 'a'..'z') || (c in 'A'..'Z') || c == '_'
+
     private fun isDigit(c: Char) = c in '0'..'9'
-    fun isAlphaNumeric(c: Char) = isAlpha(c) || isDigit(c)
+
+    private fun isAlphaNumeric(c: Char) = isAlpha(c) || isDigit(c)
 
     private fun peek(): Char {
         if (isAtEnd()) return 0.toChar()

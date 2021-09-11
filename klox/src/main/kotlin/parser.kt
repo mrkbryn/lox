@@ -6,7 +6,7 @@ import kotlin.collections.ArrayList
 class ParseError : RuntimeException()
 
 class Parser(val tokens: List<Token>) {
-    var current = 0
+    private var current = 0
 
     private fun peek() = tokens[current]
 
