@@ -43,56 +43,29 @@ class AstPrinter : Expr.Visitor<String>, Stmt.Visitor<String> {
     // Expr.Visitor<String> Interface Implementation.
     //
 
-    override fun visitAssignExpr(expr: Expr.Assign): String {
-        return parenthesize("${expr.name.lexeme} := ", expr.value)
-    }
+    override fun visitAssignExpr(expr: Expr.Assign): String = parenthesize("${expr.name.lexeme} := ", expr.value)
 
-    override fun visitBinaryExpr(expr: Expr.Binary): String {
-        return parenthesize(expr.operator.lexeme, expr.left, expr.right)
-    }
+    override fun visitBinaryExpr(expr: Expr.Binary): String = parenthesize(expr.operator.lexeme, expr.left, expr.right)
 
-    override fun visitCallExpr(expr: Expr.Call): String {
-        TODO("Not yet implemented")
-    }
+    override fun visitCallExpr(expr: Expr.Call): String = parenthesize2("call", expr.callee, expr.arguments)
 
-    override fun visitGetExpr(expr: Expr.Get): String {
-        TODO("Not yet implemented")
-    }
+    override fun visitGetExpr(expr: Expr.Get): String = parenthesize2(".", expr.obj, expr.name.lexeme)
 
-    override fun visitGroupingExpr(expr: Expr.Grouping): String {
-        return parenthesize("group", expr.expression)
-    }
+    override fun visitGroupingExpr(expr: Expr.Grouping): String = parenthesize("group", expr.expression)
 
-    override fun visitLiteralExpr(expr: Expr.Literal): String {
-        if (expr.value == null) {
-            return "nil"
-        }
-        return expr.value.toString()
-    }
+    override fun visitLiteralExpr(expr: Expr.Literal): String = if (expr.value == null) "nil" else expr.value.toString()
 
-    override fun visitLogicalExpr(expr: Expr.Logical): String {
-        return parenthesize(expr.operator.lexeme, expr.left, expr.right)
-    }
+    override fun visitLogicalExpr(expr: Expr.Logical): String = parenthesize(expr.operator.lexeme, expr.left, expr.right)
 
-    override fun visitSetExpr(expr: Expr.Set): String {
-        TODO("Not yet implemented")
-    }
+    override fun visitSetExpr(expr: Expr.Set): String = parenthesize2("=", expr.obj, expr.name.lexeme, expr.value)
 
-    override fun visitSuperExpr(expr: Expr.Super): String {
-        TODO("Not yet implemented")
-    }
+    override fun visitSuperExpr(expr: Expr.Super): String = parenthesize2("super", expr.method)
 
-    override fun visitThisExpr(expr: Expr.This): String {
-        TODO("Not yet implemented")
-    }
+    override fun visitThisExpr(expr: Expr.This): String = "this"
 
-    override fun visitUnaryExpr(expr: Expr.Unary): String {
-        return parenthesize(expr.operator.lexeme, expr.right)
-    }
+    override fun visitUnaryExpr(expr: Expr.Unary): String = parenthesize(expr.operator.lexeme, expr.right)
 
-    override fun visitVariableExpr(expr: Expr.Variable): String {
-        return expr.name.lexeme
-    }
+    override fun visitVariableExpr(expr: Expr.Variable): String = expr.name.lexeme
 
     //
     // Stmt.Visitor<String> Interface Implementation.
@@ -117,9 +90,7 @@ class AstPrinter : Expr.Visitor<String>, Stmt.Visitor<String> {
         return builder.toString()
     }
 
-    override fun visitExpressionStmt(stmt: Stmt.Expression): String {
-        return parenthesize(";", stmt.expression)
-    }
+    override fun visitExpressionStmt(stmt: Stmt.Expression): String = parenthesize(";", stmt.expression)
 
     override fun visitFunctionStmt(stmt: Stmt.Function): String {
         val builder = StringBuilder()
@@ -155,9 +126,7 @@ class AstPrinter : Expr.Visitor<String>, Stmt.Visitor<String> {
         return parenthesize2("var", stmt.name, "=", stmt.initializer)
     }
 
-    override fun visitWhileStmt(stmt: Stmt.While): String {
-        return parenthesize2("while", stmt.condition, stmt.body)
-    }
+    override fun visitWhileStmt(stmt: Stmt.While): String = parenthesize2("while", stmt.condition, stmt.body)
 }
 
 fun main() {
