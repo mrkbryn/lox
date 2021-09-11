@@ -2,9 +2,11 @@ package com.mab.lox
 
 import java.lang.StringBuilder
 
-class AstPrinter : Expr.Visitor<String> {
+class AstPrinter : Expr.Visitor<String>, Stmt.Visitor<String> {
 
     fun print(expr: Expr) = expr.accept(this)
+
+    fun print(stmt: Stmt) = stmt.accept(this)
 
     private fun parenthesize(name: String, vararg exprs: Expr): String {
         val builder = StringBuilder()
@@ -17,8 +19,44 @@ class AstPrinter : Expr.Visitor<String> {
         return builder.toString()
     }
 
+    private fun parenthesize2(name: String, vararg parts: Any?): String {
+        val builder = StringBuilder()
+        builder.append("(").append(name)
+        transform(builder, parts)
+        builder.append(")")
+        return builder.toString()
+    }
+
+    private fun transform(builder: StringBuilder, vararg parts: Any?) {
+        parts.forEach {
+            builder.append(" ")
+            when (it) {
+                is Expr -> it.accept(this)
+                is Stmt -> it.accept(this)
+                is Token -> builder.append(it.lexeme)
+                else -> builder.append(it)
+            }
+        }
+    }
+
+    //
+    // Expr.Visitor<String> Interface Implementation.
+    //
+
+    override fun visitAssignExpr(expr: Expr.Assign): String {
+        return parenthesize("${expr.name.lexeme} := ", expr.value)
+    }
+
     override fun visitBinaryExpr(expr: Expr.Binary): String {
         return parenthesize(expr.operator.lexeme, expr.left, expr.right)
+    }
+
+    override fun visitCallExpr(expr: Expr.Call): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitGetExpr(expr: Expr.Get): String {
+        TODO("Not yet implemented")
     }
 
     override fun visitGroupingExpr(expr: Expr.Grouping): String {
@@ -32,28 +70,8 @@ class AstPrinter : Expr.Visitor<String> {
         return expr.value.toString()
     }
 
-    override fun visitUnaryExpr(expr: Expr.Unary): String {
-        return parenthesize(expr.operator.lexeme, expr.right)
-    }
-
     override fun visitLogicalExpr(expr: Expr.Logical): String {
         return parenthesize(expr.operator.lexeme, expr.left, expr.right)
-    }
-
-    override fun visitVariableExpr(expr: Expr.Variable): String {
-        return expr.name.lexeme
-    }
-
-    override fun visitAssignExpr(expr: Expr.Assign): String {
-        return parenthesize("${expr.name.lexeme} := ", expr.value)
-    }
-
-    override fun visitCallExpr(expr: Expr.Call): String {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitGetExpr(expr: Expr.Get): String {
-        TODO("Not yet implemented")
     }
 
     override fun visitSetExpr(expr: Expr.Set): String {
@@ -67,6 +85,79 @@ class AstPrinter : Expr.Visitor<String> {
     override fun visitThisExpr(expr: Expr.This): String {
         TODO("Not yet implemented")
     }
+
+    override fun visitUnaryExpr(expr: Expr.Unary): String {
+        return parenthesize(expr.operator.lexeme, expr.right)
+    }
+
+    override fun visitVariableExpr(expr: Expr.Variable): String {
+        return expr.name.lexeme
+    }
+
+    //
+    // Stmt.Visitor<String> Interface Implementation.
+    //
+
+    override fun visitBlockStmt(stmt: Stmt.Block): String {
+        val builder = StringBuilder()
+        builder.append("(block ")
+        stmt.statements.forEach { builder.append(it.accept(this)) }
+        builder.append(")")
+        return builder.toString()
+    }
+
+    override fun visitClassStmt(stmt: Stmt.Class): String {
+        val builder = StringBuilder()
+        builder.append("(class ${stmt.name.lexeme}")
+        if (stmt.superclass != null) builder.append(" < ${print(stmt.superclass)}")
+
+        stmt.methods.forEach { builder.append(" ${print(it)}") }
+
+        builder.append(")")
+        return builder.toString()
+    }
+
+    override fun visitExpressionStmt(stmt: Stmt.Expression): String {
+        return parenthesize(";", stmt.expression)
+    }
+
+    override fun visitFunctionStmt(stmt: Stmt.Function): String {
+        val builder = StringBuilder()
+        builder.append("(fun ${stmt.name.lexeme}(")
+        stmt.params.forEach {
+            if (it != stmt.params[0]) builder.append(" ")
+            builder.append(it.lexeme)
+        }
+        builder.append(") ")
+        stmt.body.forEach { builder.append(it.accept(this)) }
+        builder.append(")")
+        return builder.toString()
+    }
+
+    override fun visitIfStmt(stmt: Stmt.If): String {
+        if (stmt.elseBranch == null) {
+            return parenthesize2("if", stmt.condition, stmt.thenBranch)
+        }
+        return parenthesize2("if-else", stmt.condition, stmt.thenBranch, stmt.elseBranch)
+    }
+
+    override fun visitPrintStmt(stmt: Stmt.Print): String = parenthesize("print", stmt.expression)
+
+    override fun visitReturnStmt(stmt: Stmt.Return): String {
+        if (stmt.value == null) return "(return)"
+        return parenthesize("return", stmt.value)
+    }
+
+    override fun visitVarStmt(stmt: Stmt.Var): String {
+        if (stmt.initializer == null) {
+            return parenthesize2("var", stmt.name)
+        }
+        return parenthesize2("var", stmt.name, "=", stmt.initializer)
+    }
+
+    override fun visitWhileStmt(stmt: Stmt.While): String {
+        return parenthesize2("while", stmt.condition, stmt.body)
+    }
 }
 
 fun main() {
@@ -76,6 +167,8 @@ fun main() {
             Expr.Literal(123)),
         Token(TokenType.STAR, "*", null, 1),
         Expr.Grouping(Expr.Literal(45.67)))
-
     println(AstPrinter().print(expression))
+
+    val statement = Stmt.Print(expression)
+    println(AstPrinter().print(statement))
 }
