@@ -65,6 +65,18 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
         return null
     }
 
+    override fun visitClassStmt(stmt: Stmt.Class): Void? {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitFunctionStmt(stmt: Stmt.Function): Void? {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitReturnStmt(stmt: Stmt.Return): Void? {
+        TODO("Not yet implemented")
+    }
+
     override fun visitBinaryExpr(expr: Expr.Binary): Any? {
         val left = evaluate(expr.left)
         val right = evaluate(expr.right)
@@ -179,5 +191,25 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
         val value: Any? = if (stmt.initializer != null) evaluate(stmt.initializer) else null
         environment.define(stmt.name.lexeme, value)
         return null
+    }
+
+    override fun visitCallExpr(expr: Expr.Call): Any? {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitGetExpr(expr: Expr.Get): Any? {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitSetExpr(expr: Expr.Set): Any? {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitSuperExpr(expr: Expr.Super): Any? {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitThisExpr(expr: Expr.This): Any? {
+        TODO("Not yet implemented")
     }
 }

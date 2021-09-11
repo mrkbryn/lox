@@ -47,6 +47,26 @@ class AstPrinter : Expr.Visitor<String> {
     override fun visitAssignExpr(expr: Expr.Assign): String {
         return parenthesize("${expr.name.lexeme} := ", expr.value)
     }
+
+    override fun visitCallExpr(expr: Expr.Call): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitGetExpr(expr: Expr.Get): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitSetExpr(expr: Expr.Set): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitSuperExpr(expr: Expr.Super): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitThisExpr(expr: Expr.This): String {
+        TODO("Not yet implemented")
+    }
 }
 
 fun main() {
