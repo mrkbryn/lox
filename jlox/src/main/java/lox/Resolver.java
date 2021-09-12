@@ -9,6 +9,7 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     private final Interpreter interpreter;
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
     private FunctionType currentFunction = FunctionType.NONE;
+    private ClassType currentClass = ClassType.NONE;
 
     Resolver(Interpreter interpreter) {
         this.interpreter = interpreter;
@@ -19,9 +20,8 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         FUNCTION,
         INITIALIZER,
         METHOD
-    }
 
-    private ClassType currentClass = ClassType.NONE;
+    }
 
     private enum ClassType {
         NONE,
@@ -32,6 +32,46 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     void resolve(List<Stmt> statements) {
         for (Stmt statement : statements) {
             resolve(statement);
+        }
+    }
+
+    private void resolve(Stmt stmt) {
+        stmt.accept(this);
+    }
+
+    private void resolve(Expr expr) {
+        expr.accept(this);
+    }
+
+    private void beginScope() {
+        scopes.push(new HashMap<String, Boolean>());
+    }
+
+    private void endScope() {
+        scopes.pop();
+    }
+
+    private void declare(Token name) {
+        if (scopes.isEmpty()) return;
+
+        Map<String, Boolean> scope = scopes.peek();
+        if (!scope.containsKey(name.lexeme)) {
+            Lox.error(name, "Already a variable with this name is in scope.");
+        }
+        scope.put(name.lexeme, false);
+    }
+
+    private void define(Token name) {
+        if (scopes.isEmpty()) return;
+        scopes.peek().put(name.lexeme, true);
+    }
+
+    private void resolveLocal(Expr expr, Token name) {
+        for (int i = scopes.size() - 1; i >= 0; i--) {
+            if (scopes.get(i).containsKey(name.lexeme)) {
+                interpreter.resolve(expr, scopes.size() - 1 - i);
+                return;
+            }
         }
     }
 
@@ -262,45 +302,4 @@ public class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         resolveLocal(expr, expr.name);
         return null;
     }
-
-    private void resolve(Stmt stmt) {
-        stmt.accept(this);
-    }
-
-    private void resolve(Expr expr) {
-        expr.accept(this);
-    }
-
-    private void beginScope() {
-        scopes.push(new HashMap<String, Boolean>());
-    }
-
-    private void endScope() {
-        scopes.pop();
-    }
-
-    private void declare(Token name) {
-        if (scopes.isEmpty()) return;
-
-        Map<String, Boolean> scope = scopes.peek();
-        if (!scope.containsKey(name.lexeme)) {
-            Lox.error(name, "Already a variable with this name is in scope.");
-        }
-        scope.put(name.lexeme, false);
-    }
-
-    private void define(Token name) {
-        if (scopes.isEmpty()) return;
-        scopes.peek().put(name.lexeme, true);
-    }
-
-    private void resolveLocal(Expr expr, Token name) {
-        for (int i = scopes.size() - 1; i >= 0; i--) {
-            if (scopes.get(i).containsKey(name.lexeme)) {
-                interpreter.resolve(expr, scopes.size() - 1 - i);
-                return;
-            }
-        }
-    }
-
 }
