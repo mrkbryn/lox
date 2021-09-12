@@ -1,5 +1,9 @@
 package com.mab.lox
 
+/**
+ * Representation of a class definition for the Lox language. The Lox class provides a default `init` class method
+ * which can be overridden. Calling a LoxClass returns a new instance of the class.
+ */
 class LoxClass(val name: String, val superclass: LoxClass?, val methods: Map<String, LoxFunction>) : LoxCallable {
     override fun arity(): Int {
         val initializer = findMethod("init")

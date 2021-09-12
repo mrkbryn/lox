@@ -1,10 +1,14 @@
 package com.mab.lox
 
 class LoxFunction(val declaration: Stmt.Function, val closure: Environment, val isInitializer: Boolean) : LoxCallable {
-    override fun arity(): Int {
-        return declaration.params.size
-    }
+    /**
+     * Returns the number of arguments expected in a function call.
+     */
+    override fun arity(): Int = declaration.params.size
 
+    /**
+     * Executes the function with the given arguments within the passed Interpreter.
+     */
     override fun call(interpreter: Interpreter?, arguments: List<Any?>?): Any? {
         val environment = Environment(closure)
         declaration.params.forEachIndexed { index, param ->

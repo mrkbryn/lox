@@ -7,26 +7,8 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
     private val locals: HashMap<Expr, Int> = HashMap()
 
     init {
-        registerBuiltInFunctions()
-    }
-
-    private fun registerBuiltInFunctions() {
-        globals.define("clock", object : LoxCallable {
-            override fun arity(): Int = 0
-            override fun call(interpreter: Interpreter?, arguments: List<Any?>?): Any? = System.currentTimeMillis().toDouble() / 1000.0;
-        })
-        globals.define("exit", object : LoxCallable {
-            override fun arity(): Int = 1
-            override fun call(interpreter: Interpreter?, arguments: List<Any?>?): Any? = System.exit(arguments?.get(0) as Int)
-        })
-        globals.define("print", object : LoxCallable {
-            override fun arity(): Int = 1
-            override fun call(interpreter: Interpreter?, arguments: List<Any?>?): Any? = println(arguments?.get(0))
-        })
-        globals.define("printerr", object : LoxCallable {
-            override fun arity(): Int = 1
-            override fun call(interpreter: Interpreter?, arguments: List<Any?>?): Any? = System.err.println(arguments?.get(0))
-        })
+        // Populate global functions from Lox's standard library.
+        LoxStandardLib.global_functions.forEach { name, function -> globals.define(name, function) }
     }
 
     fun interpret(statements: List<Stmt>) {
@@ -44,31 +26,6 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
         } else {
             globals.get(name)
         }
-    }
-
-    private fun isTruthy(obj: Any?): Boolean {
-        if (obj == null) return false
-        if (obj is Boolean) return obj
-        return true
-    }
-
-    private fun isEqual(a: Any?, b: Any?): Boolean {
-        if (a == null && b == null) return true
-        if (a == null) return false
-        return a.equals(b)
-    }
-
-    private fun stringify(obj: Any?): String {
-        if (obj == null) return "nil"
-        if (obj is Double) {
-            var text = obj.toString()
-            if (text.endsWith(".0")) {
-                text = text.substring(0, text.length - 2)
-            }
-            return text
-        }
-
-        return obj.toString()
     }
 
     private fun evaluate(expr: Expr) = expr.accept(this)

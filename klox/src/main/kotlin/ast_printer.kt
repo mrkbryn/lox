@@ -2,6 +2,9 @@ package com.mab.lox
 
 import java.lang.StringBuilder
 
+/**
+ * Visits a Lox abstract syntax tree and generates a string representation of Expr and Stmts.
+ */
 class AstPrinter : Expr.Visitor<String>, Stmt.Visitor<String> {
 
     fun print(expr: Expr) = expr.accept(this)
