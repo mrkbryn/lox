@@ -1,5 +1,8 @@
 package com.mab.lox
 
+import java.lang.Exception
+import kotlin.system.exitProcess
+
 class LoxStandardLib {
     companion object {
         val global_functions = mapOf(
@@ -29,8 +32,9 @@ class LoxExit : LoxCallable {
     override fun arity(): Int = 1
 
     override fun call(interpreter: Interpreter?, arguments: List<Any?>?): Any? {
-        System.exit(arguments?.get(0) as Int)
-        return null
+        val exitCode = arguments?.get(0)
+        if (exitCode is Int) exitProcess(exitCode)
+        throw Exception("Bad input arg")
     }
 }
 

@@ -48,7 +48,7 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
 
     private fun checkNumberOperands(operator: Token, vararg operands: Any?) {
         operands.forEach {
-            if (it !is Double) {
+            if (it !is Double && it !is Int) {
                 throw RuntimeError(operator, "Operand(s) must be numbers.")
             }
         }
@@ -72,43 +72,85 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
         when (expr.operator.type) {
             GREATER -> {
                 checkNumberOperands(expr.operator, left, right)
-                return (left as Double) > (right as Double)
+                return when {
+                    left is Double && right is Double -> left > right
+                    left is Int && right is Int -> left > right
+                    left is Double && right is Int -> left > right
+                    left is Int && right is Double -> left > right
+                    else -> throw RuntimeError(expr.operator, "Operands must be two numbers.")
+                }
             }
             GREATER_EQUAL -> {
                 checkNumberOperands(expr.operator, left, right)
-                return (left as Double) >= (right as Double)
+                return when {
+                    left is Double && right is Double -> left >= right
+                    left is Int && right is Int -> left >= right
+                    left is Double && right is Int -> left >= right
+                    left is Int && right is Double -> left >= right
+                    else -> throw RuntimeError(expr.operator, "Operands must be two numbers.")
+                }
             }
             LESS -> {
                 checkNumberOperands(expr.operator, left, right)
-                return (left as Double) < (right as Double)
+                return when {
+                    left is Double && right is Double -> left < right
+                    left is Int && right is Int -> left < right
+                    left is Double && right is Int -> left < right
+                    left is Int && right is Double -> left < right
+                    else -> throw RuntimeError(expr.operator, "Operands must be two numbers.")
+                }
             }
             LESS_EQUAL -> {
                 checkNumberOperands(expr.operator, left, right)
-                return (left as Double) <= (right as Double)
+                return when {
+                    left is Double && right is Double -> left <= right
+                    left is Int && right is Int -> left <= right
+                    left is Double && right is Int -> left <= right
+                    left is Int && right is Double -> left <= right
+                    else -> throw RuntimeError(expr.operator, "Operands must be two numbers.")
+                }
             }
             BANG_EQUAL -> return !isEqual(left, right)
             EQUAL_EQUAL -> return isEqual(left, right)
             MINUS -> {
                 checkNumberOperands(expr.operator, right)
-                return (left as Double) - (right as Double)
+                return when {
+                    left is Double && right is Double -> left - right
+                    left is Int && right is Int -> left - right
+                    left is Double && right is Int -> left - right
+                    left is Int && right is Double -> left - right
+                    else -> throw RuntimeError(expr.operator, "Operands must be two numbers.")
+                }
             }
             PLUS -> {
-                if (left is Double && right is Double) {
-                    return left + right
+                return when {
+                    left is Double && right is Double -> left + right
+                    left is Int && right is Int -> left + right
+                    left is Double && right is Int -> left + right
+                    left is Int && right is Double -> left + right
+                    left is String && right is String -> left + right
+                    else -> throw RuntimeError(expr.operator, "Operands must be two numbers or two strings.")
                 }
-                if (left is String && right is String) {
-                    return left + right
-                }
-
-                throw RuntimeError(expr.operator, "Operands must be two numbers or two strings.")
             }
             SLASH -> {
                 checkNumberOperands(expr.operator, left, right)
-                return (left as Double) / (right as Double)
+                return when {
+                    left is Double && right is Double -> left / right
+                    left is Int && right is Int -> left / right
+                    left is Double && right is Int -> left / right
+                    left is Int && right is Double -> left / right
+                    else -> throw RuntimeError(expr.operator, "Operands must be two numbers.")
+                }
             }
             STAR -> {
                 checkNumberOperands(expr.operator, left, right)
-                return (left as Double) * (right as Double)
+                return when {
+                    left is Double && right is Double -> left * right
+                    left is Int && right is Int -> left * right
+                    left is Double && right is Int -> left * right
+                    left is Int && right is Int -> left * right
+                    else -> throw RuntimeError(expr.operator, "Operands must be two numbers.")
+                }
             }
             else -> {
                 // Unreachable.
@@ -184,7 +226,11 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
             BANG -> return isTruthy(right)
             MINUS -> {
                 checkNumberOperands(expr.operator, right)
-                return -(right as Double)
+                return when (right) {
+                    is Double -> -right
+                    is Int -> -right
+                    else -> throw RuntimeError(expr.operator, "Operand must be a number.")
+                }
             }
             else -> {
                 // Unreachable.

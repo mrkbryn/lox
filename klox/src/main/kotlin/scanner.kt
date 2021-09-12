@@ -153,6 +153,7 @@ class Scanner(private val source: String) {
     private fun number() {
         while (isDigit(peek())) advance()
 
+        val isInt = peek() != '.'
         if (peek() == '.' && isDigit(peekNext())) {
             // Consume the '.'
             advance()
@@ -160,6 +161,8 @@ class Scanner(private val source: String) {
             while (isDigit(peek())) advance()
         }
 
-        addToken(NUMBER, source.substring(start, current).toDouble())
+        val literalStr = source.substring(start, current)
+        val literal = if (isInt) literalStr.toInt() else literalStr.toDouble()
+        addToken(NUMBER, literal)
     }
 }
