@@ -75,7 +75,7 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
 
     private fun execute(stmt: Stmt) = stmt.accept(this)
 
-    private fun resolve(expr: Expr, depth: Int) {
+    fun resolve(expr: Expr, depth: Int) {
         locals[expr] = depth
     }
 
