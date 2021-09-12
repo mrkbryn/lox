@@ -26,7 +26,7 @@ tasks.withType<KotlinCompile>() {
 }
 
 application {
-    mainClassName = "com.mab.lox.MainKt"
+    mainClass.set("com.mab.lox.MainKt")
 }
 
 task("generateAst", JavaExec::class) {

@@ -15,6 +15,48 @@ public class Parser {
         this.tokens = tokens;
     }
 
+    private boolean match(TokenType... types) {
+        for (TokenType type : types) {
+            if (check(type)) {
+                advance();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Token consume(TokenType type, String message) {
+        if (check(type)) return advance();
+        throw error(peek(), message);
+    }
+
+    private boolean check(TokenType type) {
+        if (isAtEnd()) return false;
+        return peek().type == type;
+    }
+
+    private Token advance() {
+        if (!isAtEnd()) current++;
+        return previous();
+    }
+
+    private boolean isAtEnd() {
+        return peek().type == EOF;
+    }
+
+    private Token peek() {
+        return tokens.get(current);
+    }
+
+    private Token previous() {
+        return tokens.get(current - 1);
+    }
+
+    private ParseError error(Token token, String message) {
+        Lox.error(token, message);
+        return new ParseError();
+    }
+
     List<Stmt> parse() {
         List<Stmt> statements = new ArrayList<>();
         while (!isAtEnd()) {
@@ -369,48 +411,6 @@ public class Parser {
         }
 
         throw error(peek(), "Expect expression.");
-    }
-
-    private boolean match(TokenType... types) {
-        for (TokenType type : types) {
-            if (check(type)) {
-                advance();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private Token consume(TokenType type, String message) {
-        if (check(type)) return advance();
-        throw error(peek(), message);
-    }
-
-    private boolean check(TokenType type) {
-        if (isAtEnd()) return false;
-        return peek().type == type;
-    }
-
-    private Token advance() {
-        if (!isAtEnd()) current++;
-        return previous();
-    }
-
-    private boolean isAtEnd() {
-        return peek().type == EOF;
-    }
-
-    private Token peek() {
-        return tokens.get(current);
-    }
-
-    private Token previous() {
-        return tokens.get(current - 1);
-    }
-
-    private ParseError error(Token token, String message) {
-        Lox.error(token, message);
-        return new ParseError();
     }
 
     private void synchronize() {

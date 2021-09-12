@@ -77,22 +77,6 @@ import kotlin.collections.ArrayList
 class Parser(val tokens: List<Token>) {
     private var current = 0
 
-    private fun peek() = tokens[current]
-
-    private fun previous() = tokens[current-1]
-
-    private fun advance(): Token {
-        if (!isAtEnd()) current++
-        return previous()
-    }
-
-    private fun isAtEnd() = peek().type == EOF
-
-    private fun check(type: TokenType): Boolean {
-        if (isAtEnd()) return false
-        return peek().type == type
-    }
-
     private fun match(vararg types: TokenType): Boolean {
         types.forEach {
             if (check(it)) {
@@ -108,11 +92,30 @@ class Parser(val tokens: List<Token>) {
         throw error(peek(), message)
     }
 
+    private fun check(type: TokenType): Boolean {
+        if (isAtEnd()) return false
+        return peek().type == type
+    }
+
+    private fun advance(): Token {
+        if (!isAtEnd()) current++
+        return previous()
+    }
+
+    private fun isAtEnd() = peek().type == EOF
+
+    private fun peek() = tokens[current]
+
+    private fun previous() = tokens[current-1]
+
     private fun error(token: Token, message: String): ParseError {
         Lox.error(token, message)
         return ParseError()
     }
 
+    /**
+     * Parses the tokens into a list of Stmts.
+     */
     fun parse(): List<Stmt> {
         val statements = ArrayList<Stmt>()
         while (!isAtEnd()) {
@@ -122,6 +125,11 @@ class Parser(val tokens: List<Token>) {
             }
         }
         return statements
+    }
+
+    private fun expression(): Expr {
+        // expression -> assignment ;
+        return assignment()
     }
 
     private fun declaration(): Stmt? {
@@ -157,31 +165,6 @@ class Parser(val tokens: List<Token>) {
         consume(RIGHT_BRACE, "Expect '}' after class body.")
 
         return Stmt.Class(name, superclass, methods)
-    }
-
-    private fun function(kind: String): Stmt.Function {
-        val name = consume(IDENTIFIER, "Expect $kind name.")
-        consume(LEFT_PAREN, "Expect '(' after $kind name.")
-        val parameters = ArrayList<Token>()
-        if (!check(RIGHT_PAREN)) {
-            do {
-                if (parameters.size >= 255) {
-                    error(peek(), "Can't have more than 255 parameters.")
-                }
-                parameters.add(consume(IDENTIFIER, "Expect parameter name."))
-            } while (match(COMMA))
-        }
-        consume(RIGHT_PAREN, "Expect ')' after parameters.")
-        consume(LEFT_BRACE, "Expect '{' before $kind body.")
-        val body = block()
-        return Stmt.Function(name, parameters, body)
-    }
-
-    private fun varDeclaration(): Stmt {
-        val name = consume(IDENTIFIER, "Expect variable name.")
-        val initializer: Expr? = if (match(EQUAL)) expression() else null
-        consume(SEMICOLON, "Expect ';' after variable declaration.")
-        return Stmt.Var(name, initializer)
     }
 
     private fun statement(): Stmt {
@@ -253,6 +236,13 @@ class Parser(val tokens: List<Token>) {
         return Stmt.Return(keyword, value)
     }
 
+    private fun varDeclaration(): Stmt {
+        val name = consume(IDENTIFIER, "Expect variable name.")
+        val initializer: Expr? = if (match(EQUAL)) expression() else null
+        consume(SEMICOLON, "Expect ';' after variable declaration.")
+        return Stmt.Var(name, initializer)
+    }
+
     private fun whileStatement(): Stmt {
         // whileStmt -> "while" "(" expression ")" statement ;
         consume(LEFT_PAREN, "Expect '(' after 'while'.")
@@ -269,9 +259,22 @@ class Parser(val tokens: List<Token>) {
         return Stmt.Expression(expr)
     }
 
-    private fun expression(): Expr {
-        // expression -> assignment ;
-        return assignment()
+    private fun function(kind: String): Stmt.Function {
+        val name = consume(IDENTIFIER, "Expect $kind name.")
+        consume(LEFT_PAREN, "Expect '(' after $kind name.")
+        val parameters = ArrayList<Token>()
+        if (!check(RIGHT_PAREN)) {
+            do {
+                if (parameters.size >= 255) {
+                    error(peek(), "Can't have more than 255 parameters.")
+                }
+                parameters.add(consume(IDENTIFIER, "Expect parameter name."))
+            } while (match(COMMA))
+        }
+        consume(RIGHT_PAREN, "Expect ')' after parameters.")
+        consume(LEFT_BRACE, "Expect '{' before $kind body.")
+        val body = block()
+        return Stmt.Function(name, parameters, body)
     }
 
     private fun block(): List<Stmt> {
@@ -387,6 +390,20 @@ class Parser(val tokens: List<Token>) {
         return call()
     }
 
+    private fun finishCall(callee: Expr): Expr {
+        val arguments = ArrayList<Expr>()
+        if (!check(RIGHT_PAREN)) {
+            do {
+                if (arguments.size >= 255) {
+                    error(peek(), "Can't have more than 255 arguments.")
+                }
+                arguments.add(expression())
+            } while (match(COMMA))
+        }
+        val paren = consume(RIGHT_PAREN, "Expect ')' after arguments.")
+        return Expr.Call(callee, paren, arguments)
+    }
+
     private fun call(): Expr {
         var expr = primary()
 
@@ -401,20 +418,6 @@ class Parser(val tokens: List<Token>) {
         }
 
         return expr
-    }
-
-    private fun finishCall(callee: Expr): Expr {
-        val arguments = ArrayList<Expr>()
-        if (!check(RIGHT_PAREN)) {
-            do {
-                if (arguments.size >= 255) {
-                    error(peek(), "Can't have more than 255 arguments.")
-                }
-                arguments.add(expression())
-            } while (match(COMMA))
-        }
-        val paren = consume(RIGHT_PAREN, "Expect ')' after arguments.")
-        return Expr.Call(callee, paren, arguments)
     }
 
     private fun primary(): Expr {
