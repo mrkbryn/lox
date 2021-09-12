@@ -2,7 +2,7 @@ package com.mab.lox
 
 import com.mab.lox.TokenType.*
 
-class Scanner(val source: String) {
+class Scanner(private val source: String) {
     private val tokens = ArrayList<Token>()
     private var start = 0
     private var current = 0
@@ -112,6 +112,9 @@ class Scanner(val source: String) {
         }
     }
 
+    /**
+     * `STRING -> "\"" <any char except "\"">* "\"";`
+     */
     private fun string() {
         // Handler for parsing remaining portion of string.
         while (peek() != '"' && !isAtEnd()) {
@@ -134,6 +137,9 @@ class Scanner(val source: String) {
         addToken(STRING, value)
     }
 
+    /**
+     * `IDENTIFIER -> ALPHA ( ALPHA | DIGIT )* ;`
+     */
     private fun identifier() {
         while (isAlphaNumeric(peek())) advance()
 
@@ -141,6 +147,9 @@ class Scanner(val source: String) {
         addToken(keywords.getOrDefault(text, IDENTIFIER))
     }
 
+    /**
+     * `NUMBER -> DIGIT+ ( "." DIGIT+ )? ;`
+     */
     private fun number() {
         while (isDigit(peek())) advance()
 

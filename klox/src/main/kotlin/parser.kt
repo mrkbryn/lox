@@ -38,7 +38,7 @@ import kotlin.collections.ArrayList
  *                          expression? ") statement ;
  *      ifStmt          -> "if" "(" expression ")" statement ( "else" statement )? ;
  *      printStmt       -> "print" expression ";" ;
- *      returnStmt      -> "return expression? ";"
+ *      returnStmt      -> "return" expression? ";"
  *      whileStmt       -> "while" "(" expression ")" statement ;
  *      block           -> "{" declaration* "}" ;
  * ```
@@ -51,10 +51,11 @@ import kotlin.collections.ArrayList
  *      logic_and       -> equality ( "and" equality )* ;
  *      equality        -> comparison ( ( "!=" | "==" ) comparison )* ;
  *      comparison      -> term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+ *      term            -> factor ( ( "-" | "+" ) factor )* ;
  *      factor          -> unary ( ( "/" | "*" ) unary )* ;
  *      unary           -> ( "!" | "-" ) unary | call ;
  *      call            -> primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
- *      primary         -> "true" | "false" | "nil" | "this" | NUMBER | STRING | IDENTIFIER | "(" expression ")" |
+ *      primary         -> "true" | "false" | "nil" | "this" | NUMBER | STRING | IDENTIFIER | "(" expression ")"
  *                      | "super" "." IDENTIFIER ;
  * ```
  *
@@ -114,7 +115,7 @@ class Parser(val tokens: List<Token>) {
     }
 
     /**
-     * Parses the tokens into a list of Stmts.
+     * `program -> declaration* EOF ;`
      */
     fun parse(): List<Stmt> {
         val statements = ArrayList<Stmt>()
@@ -127,13 +128,18 @@ class Parser(val tokens: List<Token>) {
         return statements
     }
 
+    /**
+     * `expression -> assignment ;`
+     */
     private fun expression(): Expr {
         // expression -> assignment ;
         return assignment()
     }
 
+    /**
+     * `declaration -> classDecl | funDecl | varDecl | statement ;`
+     */
     private fun declaration(): Stmt? {
-        // declaration -> classDecl | funDecl | varDecl | statement ;
         try {
             if (match(CLASS)) return classDeclaration()
             if (match(FUN)) return function("function")
@@ -145,8 +151,10 @@ class Parser(val tokens: List<Token>) {
         }
     }
 
+    /**
+     * `classDecl -> "class" IDENTIFIER ( "<" IDENTIFIER )? "{" function* "}" ;`
+     */
     private fun classDeclaration(): Stmt {
-        // classDecl -> "class" IDENTIFIER ( "<" IDENTIFIER )? "{" function* "}" ;
         val name = consume(IDENTIFIER, "Expect class name.")
 
         // Parse optional superclass.
@@ -167,8 +175,10 @@ class Parser(val tokens: List<Token>) {
         return Stmt.Class(name, superclass, methods)
     }
 
+    /**
+     * `statement -> exprStmt | forStmt | ifStmt | printStmt | returnStmt | whileStmt | block ;`
+     */
     private fun statement(): Stmt {
-        // statement -> ifStmt | printStmt | returnStmt | whileStmt | block | exprStmt ;
         if (match(FOR)) return forStatement()
         if (match(IF)) return ifStatement()
         if (match(PRINT)) return printStatement()
@@ -178,6 +188,9 @@ class Parser(val tokens: List<Token>) {
         return expressionStatement()
     }
 
+    /**
+     * `forStmt -> "for" "(" ( varDecl | exprStmt | ";" ) expression? ";" expression? ") statement ;`
+     */
     private fun forStatement(): Stmt {
         consume(LEFT_PAREN, "Expect '(' after 'for'.")
 
@@ -210,8 +223,10 @@ class Parser(val tokens: List<Token>) {
         return body
     }
 
+    /**
+     * `ifStmt -> "if" "(" expression ")" statement ( "else" statement )? ;`
+     */
     private fun ifStatement(): Stmt {
-        // ifStmt -> "if" "(" expression ")" statement ( "else" statement )? ;
         consume(LEFT_PAREN, "Expect '(' after 'if'.")
         val condition = expression()
         consume(RIGHT_PAREN, "Expect ')' after if condition.")
@@ -221,21 +236,28 @@ class Parser(val tokens: List<Token>) {
         return Stmt.If(condition, thenBranch, elseBranch)
     }
 
+    /**
+     * `printStmt -> "print" expression ";" ;`
+     */
     private fun printStatement(): Stmt {
-        // printStmt -> "print" expression
         val value = expression()
         consume(SEMICOLON, "Expect ';' after value.")
         return Stmt.Print(value)
     }
 
+    /**
+     * `returnStmt -> "return" expression? ";"`
+     */
     private fun returnStatement(): Stmt {
-        // returnStmt -> "return" ( expression )? ;
         val keyword = previous()
         val value = if (!check(SEMICOLON)) expression() else null
         consume(SEMICOLON, "Expect ';' after return value.")
         return Stmt.Return(keyword, value)
     }
 
+    /**
+     * `varDecl -> "var" IDENTIFIER ( "=" expression )? ";" ;`
+     */
     private fun varDeclaration(): Stmt {
         val name = consume(IDENTIFIER, "Expect variable name.")
         val initializer: Expr? = if (match(EQUAL)) expression() else null
@@ -243,8 +265,10 @@ class Parser(val tokens: List<Token>) {
         return Stmt.Var(name, initializer)
     }
 
+    /**
+     * `whileStmt -> "while" "(" expression ")" statement ;`
+     */
     private fun whileStatement(): Stmt {
-        // whileStmt -> "while" "(" expression ")" statement ;
         consume(LEFT_PAREN, "Expect '(' after 'while'.")
         val condition = expression()
         consume(RIGHT_PAREN, "Expect ')' after condition.")
@@ -252,13 +276,18 @@ class Parser(val tokens: List<Token>) {
         return Stmt.While(condition, body)
     }
 
+    /**
+     * `exprStmt -> expression ";" ;`
+     */
     private fun expressionStatement(): Stmt {
-        // expressionStmt -> expression ";" ;
         val expr = expression()
         consume(SEMICOLON, "Expect ';' after expression.")
         return Stmt.Expression(expr)
     }
 
+    /**
+     * `function -> IDENTIFIER "(" parameters? ")" block ;`
+     */
     private fun function(kind: String): Stmt.Function {
         val name = consume(IDENTIFIER, "Expect $kind name.")
         consume(LEFT_PAREN, "Expect '(' after $kind name.")
@@ -277,8 +306,10 @@ class Parser(val tokens: List<Token>) {
         return Stmt.Function(name, parameters, body)
     }
 
+    /**
+     * `block -> "{" declaration* "}" ;`
+     */
     private fun block(): List<Stmt> {
-        // block -> "{" ( declaration )* "}" ;
         val statements = ArrayList<Stmt>()
         while (!check(RIGHT_BRACE) && !isAtEnd()) {
             declaration()?.let { statements.add(it) }
@@ -287,6 +318,9 @@ class Parser(val tokens: List<Token>) {
         return statements
     }
 
+    /**
+     * `assignment -> ( call "." )? IDENTIFIER "=" assignment | logic_or ;`
+     */
     private fun assignment(): Expr {
         val expr = or()
 
@@ -302,8 +336,10 @@ class Parser(val tokens: List<Token>) {
         return expr
     }
 
+    /**
+     * `logic_or -> logic_and ( "or" logic_and )* ;`
+     */
     private fun or(): Expr {
-        // or -> and ( "or" and )*
         var expr = and()
 
         while (match(OR)) {
@@ -315,8 +351,10 @@ class Parser(val tokens: List<Token>) {
         return expr
     }
 
+    /**
+     * `logic_and -> equality ( "and" equality )* ;`
+     */
     private fun and(): Expr {
-        // and -> equality ( "and" equality )*
         var expr = equality()
 
         while (match(AND)) {
@@ -328,8 +366,10 @@ class Parser(val tokens: List<Token>) {
         return expr
     }
 
+    /**
+     * `equality -> comparison ( ( "!=" | "==" ) comparison )* ;`
+     */
     private fun equality(): Expr {
-        // equality -> comparison ( ( "!=" | "==" ) comparison )* ;
         var expr = comparison()
 
         while (match(BANG_EQUAL, EQUAL_EQUAL)) {
@@ -341,8 +381,10 @@ class Parser(val tokens: List<Token>) {
         return expr
     }
 
+    /**
+     * `comparison -> term ( ( ">" | ">=" | "<" | "<=" ) term )* ;`
+     */
     private fun comparison(): Expr {
-        // comparison -> term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
         var expr = term()
 
         while (match(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL)) {
@@ -354,8 +396,10 @@ class Parser(val tokens: List<Token>) {
         return expr
     }
 
+    /**
+     * `term -> factor ( ( "-" | "+" ) factor )* ;`
+     */
     private fun term(): Expr {
-        // term -> factor ( ( "-" | "+" ) factor )* ;
         var expr = factor()
 
         while (match(MINUS, PLUS)) {
@@ -367,8 +411,10 @@ class Parser(val tokens: List<Token>) {
         return expr
     }
 
+    /**
+     * `factor -> unary ( ( "/" | "*" ) unary )* ;`
+     */
     private fun factor(): Expr {
-        // factor -> unary ( ( "/" | "*" ) unary )* ;
         var expr = unary()
 
         while (match(SLASH, STAR)) {
@@ -380,6 +426,9 @@ class Parser(val tokens: List<Token>) {
         return expr
     }
 
+    /**
+     * `unary -> ( "!" | "-" ) unary | call ;`
+     */
     private fun unary(): Expr {
         if (match(BANG, BANG_EQUAL)) {
             val operator = previous()
@@ -404,6 +453,9 @@ class Parser(val tokens: List<Token>) {
         return Expr.Call(callee, paren, arguments)
     }
 
+    /**
+     * `call -> primary ( "(" arguments? ")" | "." IDENTIFIER )* ;`
+     */
     private fun call(): Expr {
         var expr = primary()
 
@@ -420,8 +472,11 @@ class Parser(val tokens: List<Token>) {
         return expr
     }
 
+    /**
+     * `primary -> "true" | "false" | "nil" | "this" | NUMBER | STRING | IDENTIFIER | "(" expression ")"
+     *           | "super" "." IDENTIFIER ;
+     */
     private fun primary(): Expr {
-        // primary -> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" | "super" "." IDENTIFIER ;
         if (match(FALSE)) {
             return Expr.Literal(false)
         }
