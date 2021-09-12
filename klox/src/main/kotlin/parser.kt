@@ -179,13 +179,15 @@ class Parser(val tokens: List<Token>) {
      * `statement -> exprStmt | forStmt | ifStmt | printStmt | returnStmt | whileStmt | block ;`
      */
     private fun statement(): Stmt {
-        if (match(FOR)) return forStatement()
-        if (match(IF)) return ifStatement()
-        if (match(PRINT)) return printStatement()
-        if (match(RETURN)) return returnStatement()
-        if (match(WHILE)) return whileStatement()
-        if (match(LEFT_BRACE)) return Stmt.Block(block())
-        return expressionStatement()
+        return when {
+            match(FOR) -> forStatement()
+            match(IF) -> ifStatement()
+            match(PRINT) -> printStatement()
+            match(RETURN) -> returnStatement()
+            match(WHILE) -> whileStatement()
+            match(LEFT_BRACE) -> Stmt.Block(block())
+            else -> expressionStatement()
+        }
     }
 
     /**
@@ -194,18 +196,18 @@ class Parser(val tokens: List<Token>) {
     private fun forStatement(): Stmt {
         consume(LEFT_PAREN, "Expect '(' after 'for'.")
 
-        val initializer: Stmt?
-        if (match(SEMICOLON)) {
-            initializer = null
-        } else if (match(VAR)) {
-            initializer = varDeclaration()
-        } else {
-            initializer = expressionStatement()
+        // Parse optional initializer statement.
+        val initializer = when {
+            match(SEMICOLON) -> null
+            match(VAR) -> varDeclaration()
+            else -> expressionStatement()
         }
 
+        // Parse optional condition statement.
         var condition = if (!check(SEMICOLON)) expression() else null
         consume(SEMICOLON, "Expect ';' after loop condition.")
 
+        // Parse optional increment statement.
         val increment = if (!check(RIGHT_PAREN)) expression() else null
         consume(RIGHT_PAREN, "Expect ')' after for clauses.")
 
@@ -219,6 +221,10 @@ class Parser(val tokens: List<Token>) {
             condition = Expr.Literal(true)
         }
         body = Stmt.While(condition, body)
+
+        if (initializer != null) {
+            body = Stmt.Block(listOf(initializer, body))
+        }
 
         return body
     }
@@ -240,6 +246,7 @@ class Parser(val tokens: List<Token>) {
      * `printStmt -> "print" expression ";" ;`
      */
     private fun printStatement(): Stmt {
+        // TODO: desugar into standard lib print?
         val value = expression()
         consume(SEMICOLON, "Expect ';' after value.")
         return Stmt.Print(value)
