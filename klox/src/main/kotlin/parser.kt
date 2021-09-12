@@ -3,6 +3,8 @@ package com.mab.lox
 import com.mab.lox.TokenType.*
 import kotlin.collections.ArrayList
 
+const val MAX_ARGUMENT_COUNT = 255
+
 /**
  * Implementation of a recursive-descent parser for the Lox language. Takes as input a stream of Lox tokens and
  * generates an abstract syntax tree of Lox statements. The Parser follows the Lox grammar below.
@@ -301,8 +303,8 @@ class Parser(val tokens: List<Token>) {
         val parameters = ArrayList<Token>()
         if (!check(RIGHT_PAREN)) {
             do {
-                if (parameters.size >= 255) {
-                    error(peek(), "Can't have more than 255 parameters.")
+                if (parameters.size >= MAX_ARGUMENT_COUNT) {
+                    error(peek(), "Can't have more than $MAX_ARGUMENT_COUNT parameters.")
                 }
                 parameters.add(consume(IDENTIFIER, "Expect parameter name."))
             } while (match(COMMA))
@@ -336,6 +338,7 @@ class Parser(val tokens: List<Token>) {
             val value = assignment()
             when (expr) {
                 is Expr.Variable -> return Expr.Assign(expr.name, value)
+                is Expr.Get -> return Expr.Set(expr.obj, expr.name, value)
                 else -> error(equals, "Invalid assignment target.")
             }
         }
@@ -348,13 +351,7 @@ class Parser(val tokens: List<Token>) {
      */
     private fun or(): Expr {
         var expr = and()
-
-        while (match(OR)) {
-            val operator = previous()
-            val right = and()
-            expr = Expr.Logical(expr, operator, right)
-        }
-
+        while (match(OR)) expr = Expr.Logical(expr, previous(), and())
         return expr
     }
 
@@ -363,13 +360,8 @@ class Parser(val tokens: List<Token>) {
      */
     private fun and(): Expr {
         var expr = equality()
-
-        while (match(AND)) {
-            val operator = previous()
-            val right = equality()
-            expr = Expr.Logical(expr, operator, right)
-        }
-
+        while (match(AND))
+            expr = Expr.Logical(expr, previous(), equality())
         return expr
     }
 
@@ -378,13 +370,8 @@ class Parser(val tokens: List<Token>) {
      */
     private fun equality(): Expr {
         var expr = comparison()
-
-        while (match(BANG_EQUAL, EQUAL_EQUAL)) {
-            val operator = previous()
-            val right = comparison()
-            expr = Expr.Binary(expr, operator, right)
-        }
-
+        while (match(BANG_EQUAL, EQUAL_EQUAL))
+            expr = Expr.Binary(expr, previous(), comparison())
         return expr
     }
 
@@ -393,13 +380,8 @@ class Parser(val tokens: List<Token>) {
      */
     private fun comparison(): Expr {
         var expr = term()
-
-        while (match(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL)) {
-            val operator = previous()
-            val right = term()
-            expr = Expr.Binary(expr, operator, right)
-        }
-
+        while (match(GREATER, GREATER_EQUAL, LESS, LESS_EQUAL))
+            expr = Expr.Binary(expr, previous(), term())
         return expr
     }
 
@@ -408,13 +390,8 @@ class Parser(val tokens: List<Token>) {
      */
     private fun term(): Expr {
         var expr = factor()
-
-        while (match(MINUS, PLUS)) {
-            val operator = previous()
-            val right = factor()
-            expr = Expr.Binary(expr, operator, right)
-        }
-
+        while (match(MINUS, PLUS))
+            expr = Expr.Binary(expr, previous(), factor())
         return expr
     }
 
@@ -423,13 +400,8 @@ class Parser(val tokens: List<Token>) {
      */
     private fun factor(): Expr {
         var expr = unary()
-
-        while (match(SLASH, STAR)) {
-            val operator = previous()
-            val right = unary()
-            expr = Expr.Binary(expr, operator, right)
-        }
-
+        while (match(SLASH, STAR))
+            expr = Expr.Binary(expr, previous(), unary())
         return expr
     }
 
@@ -437,12 +409,8 @@ class Parser(val tokens: List<Token>) {
      * `unary -> ( "!" | "-" ) unary | call ;`
      */
     private fun unary(): Expr {
-        if (match(BANG, BANG_EQUAL)) {
-            val operator = previous()
-            val right = unary()
-            return Expr.Unary(operator, right)
-        }
-
+        if (match(BANG, BANG_EQUAL))
+            return Expr.Unary(previous(), unary())
         return call()
     }
 
@@ -450,8 +418,8 @@ class Parser(val tokens: List<Token>) {
         val arguments = ArrayList<Expr>()
         if (!check(RIGHT_PAREN)) {
             do {
-                if (arguments.size >= 255) {
-                    error(peek(), "Can't have more than 255 arguments.")
+                if (arguments.size >= MAX_ARGUMENT_COUNT) {
+                    error(peek(), "Can't have more than $MAX_ARGUMENT_COUNT arguments.")
                 }
                 arguments.add(expression())
             } while (match(COMMA))
@@ -467,12 +435,17 @@ class Parser(val tokens: List<Token>) {
         var expr = primary()
 
         while (true) {
-            if (match(LEFT_PAREN)) {
-                expr = finishCall(expr)
-            } else if (match(DOT)) {
-                val name = consume(IDENTIFIER, "Expect property name after '.'.")
-            } else {
-                break
+            when {
+                match(LEFT_PAREN) -> {
+                    expr = finishCall(expr)
+                }
+                match(DOT) -> {
+                    val name = consume(IDENTIFIER, "Expect property name after '.'.")
+                    expr = Expr.Get(expr, name)
+                }
+                else -> {
+                    break
+                }
             }
         }
 
@@ -484,39 +457,29 @@ class Parser(val tokens: List<Token>) {
      *           | "super" "." IDENTIFIER ;
      */
     private fun primary(): Expr {
-        if (match(FALSE)) {
-            return Expr.Literal(false)
+        when {
+            match(FALSE) -> return Expr.Literal(false)
+            match(TRUE) -> return Expr.Literal(true)
+            match(NIL) -> return Expr.Literal(null)
+            match(NUMBER, STRING) -> return Expr.Literal(previous().literal)
+            match(SUPER) -> {
+                val keyword = previous()
+                consume(DOT, "Expect '.' after 'super'.")
+                val method = consume(IDENTIFIER, "Expect superclass method name.")
+                return Expr.Super(keyword, method)
+            }
+            match(THIS) -> return Expr.This(previous())
+            match(IDENTIFIER) -> return Expr.Variable(previous())
+            match(LEFT_PAREN) -> {
+                val expr = expression()
+                consume(RIGHT_PAREN, "Expect ')' after expression.")
+                return Expr.Grouping(expr)
+            }
+            else -> {
+                // Throw ParseError.
+                throw error(peek(), "Expect expression.")
+            }
         }
-        if (match(TRUE)) {
-            return Expr.Literal(true)
-        }
-        if (match(NIL)) {
-            return Expr.Literal(null)
-        }
-        if (match(NUMBER, STRING)) {
-            return Expr.Literal(previous().literal)
-        }
-
-        if (match(SUPER)) {
-            val keyword = previous()
-            consume(DOT, "Expect '.' after 'super'.")
-            val method = consume(IDENTIFIER, "Expect superclass method name.")
-            return Expr.Super(keyword, method)
-        }
-
-        if (match(THIS)) return Expr.This(previous())
-
-        if (match(IDENTIFIER)) {
-            return Expr.Variable(previous())
-        }
-
-        if (match(LEFT_PAREN)) {
-            val expr = expression()
-            consume(RIGHT_PAREN, "Expect ')' after expression.")
-            return Expr.Grouping(expr)
-        }
-
-        throw error(peek(), "Expect expression.")
     }
 
     private fun synchronize() {
