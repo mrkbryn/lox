@@ -5,7 +5,7 @@ plugins {
     application
 }
 
-group = "me.mabryan"
+group = "com.mab"
 version = "1.0-SNAPSHOT"
 
 repositories {

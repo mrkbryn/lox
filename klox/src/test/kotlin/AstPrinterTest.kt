@@ -65,4 +65,13 @@ internal class AstPrinterTest {
         // TODO: why do we have an extra space here?
         assertEquals("(x :=  20)", AstPrinter().print(expression))
     }
+
+    @Test
+    fun testUnaryExpr() {
+        val expression = Expr.Unary(
+            Token(TokenType.MINUS, "-", null, 1),
+            Expr.Literal(102.5)
+        )
+        assertEquals("(- 102.5)", AstPrinter().print(expression))
+    }
 }
