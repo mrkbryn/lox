@@ -3,12 +3,10 @@ package com.mab.lox
 import com.mab.lox.TokenType.*
 
 class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
-    val globals: Environment
-    val locals: Map<Expr, Int>
+    private val globals: Environment = Environment()
+    private val locals: HashMap<Expr, Int> = HashMap()
 
     init {
-        globals = Environment()
-        locals = HashMap()
         registerBuiltInFunctions()
     }
 
@@ -33,16 +31,19 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
 
     fun interpret(statements: List<Stmt>) {
         try {
-            statements.forEach {
-                execute(it)
-            }
+            statements.forEach { execute(it) }
         } catch (error: RuntimeError) {
             Lox.runtimeError(error)
         }
     }
 
     private fun lookUpVariable(name: Token, expr: Expr): Any? {
-        return environment.get(name)
+        val distance = locals[expr]
+        return if (distance != null) {
+            environment.getAt(distance, name.lexeme)
+        } else {
+            globals.get(name)
+        }
     }
 
     private fun isTruthy(obj: Any?): Boolean {
@@ -75,23 +76,25 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
     private fun execute(stmt: Stmt) = stmt.accept(this)
 
     private fun resolve(expr: Expr, depth: Int) {
-        TODO("Not yet implemented.")
+        locals[expr] = depth
     }
 
     private fun executeBlock(statements: List<Stmt>, environment: Environment) {
         val previous = this.environment
         try {
             this.environment = environment
-            statements.forEach {
-                execute(it)
-            }
+            statements.forEach { execute(it) }
         } finally {
             this.environment = previous
         }
     }
 
     private fun checkNumberOperands(operator: Token, vararg operands: Any?) {
-        TODO("Not yet implemented.")
+        operands.forEach {
+            if (it !is Double) {
+                throw RuntimeError(operator, "Operand(s) must be numbers.")
+            }
+        }
     }
 
     //
@@ -110,13 +113,28 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
         val right = evaluate(expr.right)
 
         when (expr.operator.type) {
-            GREATER -> return (left as Double) > (right as Double)
-            GREATER_EQUAL -> return (left as Double) >= (right as Double)
-            LESS -> return (left as Double) < (right as Double)
-            LESS_EQUAL -> return (left as Double) <= (right as Double)
+            GREATER -> {
+                checkNumberOperands(expr.operator, left, right)
+                return (left as Double) > (right as Double)
+            }
+            GREATER_EQUAL -> {
+                checkNumberOperands(expr.operator, left, right)
+                return (left as Double) >= (right as Double)
+            }
+            LESS -> {
+                checkNumberOperands(expr.operator, left, right)
+                return (left as Double) < (right as Double)
+            }
+            LESS_EQUAL -> {
+                checkNumberOperands(expr.operator, left, right)
+                return (left as Double) <= (right as Double)
+            }
             BANG_EQUAL -> return !isEqual(left, right)
             EQUAL_EQUAL -> return isEqual(left, right)
-            MINUS -> return (left as Double) - (right as Double)
+            MINUS -> {
+                checkNumberOperands(expr.operator, right)
+                return (left as Double) - (right as Double)
+            }
             PLUS -> {
                 if (left is Double && right is Double) {
                     return left + right
@@ -127,8 +145,14 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
 
                 throw RuntimeError(expr.operator, "Operands must be two numbers or two strings.")
             }
-            SLASH -> return (left as Double) / (right as Double)
-            STAR -> return (left as Double) * (right as Double)
+            SLASH -> {
+                checkNumberOperands(expr.operator, left, right)
+                return (left as Double) / (right as Double)
+            }
+            STAR -> {
+                checkNumberOperands(expr.operator, left, right)
+                return (left as Double) * (right as Double)
+            }
             else -> {
                 // Unreachable.
                 return null
@@ -137,7 +161,20 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
     }
 
     override fun visitCallExpr(expr: Expr.Call): Any? {
-        TODO("Not yet implemented")
+        val callee = evaluate(expr.callee)
+        val arguments = ArrayList<Any?>()
+        expr.arguments.forEach {
+            arguments.add(evaluate(it))
+        }
+
+        if (callee !is LoxCallable) {
+            throw RuntimeError(expr.paren, "Can only call functions and classes.")
+        }
+
+        if (arguments.size != callee.arity()) {
+            throw RuntimeError(expr.paren, "Expected ${callee.arity()} arguments but got ${arguments.size}.")
+        }
+        return callee.call(this, arguments)
     }
 
     override fun visitGetExpr(expr: Expr.Get): Any? {
@@ -163,23 +200,33 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
     }
 
     override fun visitSetExpr(expr: Expr.Set): Any? {
-        TODO("Not yet implemented")
+        val obj = evaluate(expr.obj)
+        if (obj !is LoxInstance) {
+            throw RuntimeError(expr.name, "Only instances have fields.")
+        }
+
+        val value = evaluate(expr.value)
+        obj.set(expr.name, value)
+        return value
     }
 
     override fun visitSuperExpr(expr: Expr.Super): Any? {
-        TODO("Not yet implemented")
+        val distance = locals[expr]!!
+        val superclass = environment.getAt(distance, "super") as LoxClass
+        val obj = environment.getAt(distance - 1, "this") as LoxInstance
+        val method = superclass.findMethod(expr.method.lexeme)
+            ?: throw RuntimeError(expr.method, "Undefined property '${expr.method.lexeme}'.")
+        return method.bind(obj)
     }
 
-    override fun visitThisExpr(expr: Expr.This): Any? {
-        TODO("Not yet implemented")
-    }
+    override fun visitThisExpr(expr: Expr.This): Any? = lookUpVariable(expr.keyword, expr)
 
     override fun visitUnaryExpr(expr: Expr.Unary): Any? {
         val right = evaluate(expr.right)
         when (expr.operator.type) {
             BANG -> return isTruthy(right)
             MINUS -> {
-                // TODO: checkNumberOperands
+                checkNumberOperands(expr.operator, right)
                 return -(right as Double)
             }
             else -> {

@@ -9,7 +9,7 @@ class Environment(val enclosing: Environment? = null) {
 
     fun ancestor(distance: Int): Environment {
         var environment = this
-        for (i in 0..distance-1) {
+        for (i in 0 until distance) {
             environment = environment.enclosing!!
         }
         return environment
