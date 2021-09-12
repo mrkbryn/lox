@@ -60,8 +60,12 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
 
     override fun visitAssignExpr(expr: Expr.Assign): Any? {
         val value = evaluate(expr.value)
-        // TODO: implement locals
-        environment.assign(expr.name, value)
+        val distance = locals[expr]
+        if (distance != null) {
+            environment.assignAt(distance, expr.name, value)
+        } else {
+            globals.assign(expr.name, value)
+        }
         return value
     }
 
@@ -251,7 +255,35 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
     }
 
     override fun visitClassStmt(stmt: Stmt.Class): Void? {
-        TODO("Not yet implemented")
+        var superclass: Any? = null
+        if (stmt.superclass != null) {
+            superclass = evaluate(stmt.superclass)
+            if (superclass !is LoxClass) {
+                throw RuntimeError(stmt.superclass.name, "Superclass must be a class.")
+            }
+        }
+
+        environment.define(stmt.name.lexeme, null)
+        if (stmt.superclass != null) {
+            environment = Environment(environment)
+            environment.define("super", superclass)
+        }
+
+        val methods = hashMapOf<String, LoxFunction>()
+        stmt.methods.forEach { method ->
+            val function = LoxFunction(method, environment, method.name.lexeme.equals("init"))
+            methods[method.name.lexeme] = function
+        }
+
+        val klass = LoxClass(stmt.name.lexeme, superclass as LoxClass, methods)
+
+        if (superclass != null) {
+            // Pop the environment to remove the "super" definition.
+            environment = environment.enclosing!!
+        }
+
+        environment.assign(stmt.name, klass)
+        return null
     }
 
     override fun visitExpressionStmt(stmt: Stmt.Expression): Void? {
@@ -260,7 +292,9 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
     }
 
     override fun visitFunctionStmt(stmt: Stmt.Function): Void? {
-        TODO("Not yet implemented")
+        val function = LoxFunction(stmt, environment, false)
+        environment.define(stmt.name.lexeme, function)
+        return null
     }
 
     override fun visitIfStmt(stmt: Stmt.If): Void? {
@@ -279,7 +313,9 @@ class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<A
     }
 
     override fun visitReturnStmt(stmt: Stmt.Return): Void? {
-        TODO("Not yet implemented")
+        // If an expression follows the "return" keyword, evaluate the expr and throw it up the stack.
+        val value = if (stmt.value != null) evaluate(stmt.value) else null
+        throw Return(value)
     }
 
     override fun visitVarStmt(stmt: Stmt.Var): Void? {
