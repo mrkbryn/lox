@@ -6,7 +6,7 @@ import kotlin.collections.HashMap
 class Resolver(
     private val interpreter: Interpreter
 ) : Expr.Visitor<Void?>, Stmt.Visitor<Void?> {
-    private val scopes: Stack<HashMap<String, Boolean>> = Stack()
+    private val scopes: Stack<MutableMap<String, Boolean>> = Stack()
     private var currentFunction = FunctionType.NONE;
     private var currentClass = ClassType.NONE;
 
