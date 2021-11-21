@@ -2,6 +2,7 @@ package com.mab.lox.interpreter
 
 import com.mab.lox.*
 import com.mab.lox.TokenType.*
+import com.mab.lox.stdlib.LoxStandardLib
 import com.mab.lox.utils.isEqual
 import com.mab.lox.utils.isTruthy
 import com.mab.lox.utils.stringify
@@ -10,7 +11,7 @@ class Interpreter(
     private var environment: Environment = Environment()
 ) : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
     private val globals: Environment = Environment()
-    private val locals: HashMap<Expr, Int> = HashMap()
+    private val locals: MutableMap<Expr, Int> = mutableMapOf()
 
     init {
         // Populate global functions from Lox's standard library.
@@ -173,7 +174,7 @@ class Interpreter(
 
     override fun visitCallExpr(expr: Expr.Call): Any? {
         val callee = evaluate(expr.callee)
-        val arguments = ArrayList<Any?>()
+        val arguments = mutableListOf<Any?>()
         expr.arguments.forEach {
             arguments.add(evaluate(it))
         }
@@ -234,11 +235,11 @@ class Interpreter(
 
     override fun visitUnaryExpr(expr: Expr.Unary): Any? {
         val right = evaluate(expr.right)
-        when (expr.operator.type) {
-            BANG -> return isTruthy(right)
+        return when (expr.operator.type) {
+            BANG -> isTruthy(right)
             MINUS -> {
                 checkNumberOperands(expr.operator, right)
-                return when (right) {
+                when (right) {
                     is Double -> -right
                     is Int -> -right
                     else -> throw RuntimeError(expr.operator, "Operand must be a number.")
@@ -246,7 +247,7 @@ class Interpreter(
             }
             else -> {
                 // Unreachable.
-                return null
+                null
             }
         }
     }
@@ -322,12 +323,12 @@ class Interpreter(
 
     override fun visitReturnStmt(stmt: Stmt.Return): Void? {
         // If an expression follows the "return" keyword, evaluate the expr and throw it up the stack.
-        val value = if (stmt.value != null) evaluate(stmt.value) else null
+        val value = stmt.value?.let { evaluate(it) }
         throw Return(value)
     }
 
     override fun visitVarStmt(stmt: Stmt.Var): Void? {
-        val value: Any? = if (stmt.initializer != null) evaluate(stmt.initializer) else null
+        val value = stmt.initializer?.let { evaluate(it) }
         environment.define(stmt.name.lexeme, value)
         return null
     }
