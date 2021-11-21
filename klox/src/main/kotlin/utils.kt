@@ -9,7 +9,7 @@ fun isTruthy(obj: Any?): Boolean {
 fun isEqual(a: Any?, b: Any?): Boolean {
     if (a == null && b == null) return true
     if (a == null) return false
-    return a.equals(b)
+    return a == b
 }
 
 fun stringify(obj: Any?): String {

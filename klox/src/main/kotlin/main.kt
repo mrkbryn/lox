@@ -5,6 +5,7 @@ import java.io.InputStreamReader
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Paths
+import kotlin.system.exitProcess
 
 class Lox {
     companion object {
@@ -17,8 +18,8 @@ class Lox {
             run(String(bytes, Charset.defaultCharset()))
 
             // Indicate an error in the exit code.
-            if (hadError) System.exit(65)
-            if (hadRuntimeError) System.exit(70)
+            if (hadError) exitProcess(65)
+            if (hadRuntimeError) exitProcess(70)
         }
 
         fun runPrompt() {

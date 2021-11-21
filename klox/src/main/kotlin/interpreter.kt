@@ -2,13 +2,17 @@ package com.mab.lox
 
 import com.mab.lox.TokenType.*
 
-class Interpreter(var environment: Environment = Environment()) : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
+class Interpreter(
+    private var environment: Environment = Environment()
+) : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
     private val globals: Environment = Environment()
     private val locals: HashMap<Expr, Int> = HashMap()
 
     init {
         // Populate global functions from Lox's standard library.
-        LoxStandardLib.global_functions.forEach { name, function -> globals.define(name, function) }
+        LoxStandardLib.global_functions.forEach { (name, function) ->
+            globals.define(name, function)
+        }
     }
 
     fun interpret(statements: List<Stmt>) {

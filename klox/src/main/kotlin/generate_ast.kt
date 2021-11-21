@@ -4,7 +4,7 @@ import java.io.PrintWriter
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
-    println("Running generate_ast with args: ${args}")
+    println("Running generate_ast with args: $args")
     if (args.size != 1) {
         System.err.println("Usage: generate_ast <output directory>")
         exitProcess(64)

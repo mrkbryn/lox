@@ -1,6 +1,10 @@
 package com.mab.lox
 
-class LoxFunction(val declaration: Stmt.Function, val closure: Environment, val isInitializer: Boolean) : LoxCallable {
+class LoxFunction(
+    private val declaration: Stmt.Function,
+    private val closure: Environment,
+    private val isInitializer: Boolean
+) : LoxCallable {
     /**
      * Returns the number of arguments expected in a function call.
      */
@@ -29,6 +33,10 @@ class LoxFunction(val declaration: Stmt.Function, val closure: Environment, val 
     fun bind(instance: LoxInstance): LoxFunction {
         val environment = Environment(closure)
         environment.define("this", instance)
-        return LoxFunction(declaration, environment, isInitializer)
+        return LoxFunction(
+            declaration = declaration,
+            closure = environment,
+            isInitializer = isInitializer
+        )
     }
 }

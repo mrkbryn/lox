@@ -3,7 +3,7 @@ package com.mab.lox
 import com.mab.lox.TokenType.*
 
 class Scanner(private val source: String) {
-    private val tokens = ArrayList<Token>()
+    private val tokens = mutableListOf<Token>()
     private var start = 0
     private var current = 0
     private var line = 1
@@ -55,7 +55,14 @@ class Scanner(private val source: String) {
             start = current
             scanToken()
         }
-        tokens.add(Token(EOF, "", null, line))
+        tokens.add(
+            Token(
+                type = EOF,
+                lexeme = "",
+                literal = null,
+                line = line
+            )
+        )
         return tokens
     }
 

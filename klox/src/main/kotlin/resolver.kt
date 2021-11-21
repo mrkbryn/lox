@@ -3,7 +3,9 @@ package com.mab.lox
 import java.util.*
 import kotlin.collections.HashMap
 
-class Resolver(val interpreter: Interpreter) : Expr.Visitor<Void?>, Stmt.Visitor<Void?> {
+class Resolver(
+    private val interpreter: Interpreter
+) : Expr.Visitor<Void?>, Stmt.Visitor<Void?> {
     private val scopes: Stack<HashMap<String, Boolean>> = Stack()
     private var currentFunction = FunctionType.NONE;
     private var currentClass = ClassType.NONE;
@@ -86,7 +88,7 @@ class Resolver(val interpreter: Interpreter) : Expr.Visitor<Void?>, Stmt.Visitor
         declare(stmt.name)
         define(stmt.name)
 
-        if (stmt.superclass != null && stmt.name.lexeme.equals(stmt.superclass.name.lexeme)) {
+        if (stmt.superclass != null && stmt.name.lexeme == stmt.superclass.name.lexeme) {
             Lox.error(stmt.superclass.name, "A class can't inherit from itself.")
         }
         if (stmt.superclass != null) {
@@ -107,7 +109,7 @@ class Resolver(val interpreter: Interpreter) : Expr.Visitor<Void?>, Stmt.Visitor
 
         stmt.methods.forEach { method ->
             var declaration = FunctionType.METHOD
-            if (method.name.lexeme.equals("init")) {
+            if (method.name.lexeme == "init") {
                 declaration = FunctionType.INITIALIZER
             }
             resolveFunction(method, declaration)
@@ -143,7 +145,7 @@ class Resolver(val interpreter: Interpreter) : Expr.Visitor<Void?>, Stmt.Visitor
     override fun visitIfStmt(stmt: Stmt.If): Void? {
         resolve(stmt.condition)
         resolve(stmt.thenBranch)
-        if (stmt.elseBranch != null) resolve(stmt.elseBranch)
+        stmt.elseBranch?.let { resolve(it) }
         return null
     }
 
@@ -169,9 +171,7 @@ class Resolver(val interpreter: Interpreter) : Expr.Visitor<Void?>, Stmt.Visitor
 
     override fun visitVarStmt(stmt: Stmt.Var): Void? {
         declare(stmt.name)
-        if (stmt.initializer != null) {
-            resolve(stmt.initializer)
-        }
+        stmt.initializer?.let { resolve(it) }
         define(stmt.name)
         return null
     }
