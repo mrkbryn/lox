@@ -1,4 +1,4 @@
-package com.mab.lox
+package com.mab.lox.utils
 
 fun isTruthy(obj: Any?): Boolean {
     if (obj == null) return false

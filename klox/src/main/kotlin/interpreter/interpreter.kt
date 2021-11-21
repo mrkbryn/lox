@@ -2,6 +2,9 @@ package com.mab.lox.interpreter
 
 import com.mab.lox.*
 import com.mab.lox.TokenType.*
+import com.mab.lox.utils.isEqual
+import com.mab.lox.utils.isTruthy
+import com.mab.lox.utils.stringify
 
 class Interpreter(
     private var environment: Environment = Environment()
