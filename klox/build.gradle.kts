@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     kotlin("jvm") version "1.4.10"
@@ -25,6 +26,15 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+
+    testLogging {
+        events(
+            TestLogEvent.FAILED,
+            TestLogEvent.PASSED,
+            TestLogEvent.SKIPPED,
+            TestLogEvent.STANDARD_OUT
+        )
+    }
 }
 
 tasks.withType<KotlinCompile>() {
