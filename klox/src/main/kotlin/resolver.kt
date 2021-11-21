@@ -1,5 +1,6 @@
 package com.mab.lox
 
+import com.mab.lox.interpreter.Interpreter
 import java.util.*
 import kotlin.collections.HashMap
 

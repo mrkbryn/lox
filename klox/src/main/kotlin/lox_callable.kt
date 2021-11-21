@@ -1,5 +1,7 @@
 package com.mab.lox
 
+import com.mab.lox.interpreter.Interpreter
+
 /**
  * Interface representing a class method or function that can be called.
  */

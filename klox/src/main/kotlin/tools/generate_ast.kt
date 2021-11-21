@@ -1,4 +1,4 @@
-package com.mab.lox
+package com.mab.lox.tools
 
 import java.io.PrintWriter
 import kotlin.system.exitProcess

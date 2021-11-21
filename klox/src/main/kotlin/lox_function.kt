@@ -1,5 +1,7 @@
 package com.mab.lox
 
+import com.mab.lox.interpreter.Interpreter
+
 class LoxFunction(
     private val declaration: Stmt.Function,
     private val closure: Environment,
@@ -17,7 +19,7 @@ class LoxFunction(
         val environment = Environment(closure)
         declaration.params.forEachIndexed { index, param ->
             if (arguments != null) {
-                environment.define(param.lexeme, arguments.get(index))
+                environment.define(param.lexeme, arguments[index])
             }
         }
 

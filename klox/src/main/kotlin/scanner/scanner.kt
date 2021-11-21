@@ -1,5 +1,8 @@
-package com.mab.lox
+package com.mab.lox.scanner
 
+import com.mab.lox.Lox
+import com.mab.lox.Token
+import com.mab.lox.TokenType
 import com.mab.lox.TokenType.*
 
 class Scanner(private val source: String) {

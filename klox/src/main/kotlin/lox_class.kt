@@ -1,5 +1,7 @@
 package com.mab.lox
 
+import com.mab.lox.interpreter.Interpreter
+
 /**
  * Representation of a class definition for the Lox language. The Lox class provides a default `init` class method
  * which can be overridden. Calling a LoxClass returns a new instance of the class.

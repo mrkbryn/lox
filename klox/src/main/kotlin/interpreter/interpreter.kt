@@ -1,5 +1,6 @@
-package com.mab.lox
+package com.mab.lox.interpreter
 
+import com.mab.lox.*
 import com.mab.lox.TokenType.*
 
 class Interpreter(
