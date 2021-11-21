@@ -60,8 +60,7 @@ class Scanner(private val source: String) {
     }
 
     private fun scanToken() {
-        val c = advance()
-        when (c) {
+        when (val c = advance()) {
             '(' -> addToken(LEFT_PAREN)
             ')' -> addToken(RIGHT_PAREN)
             '{' -> addToken(LEFT_BRACE)
@@ -72,18 +71,10 @@ class Scanner(private val source: String) {
             '+' -> addToken(PLUS)
             ';' -> addToken(SEMICOLON)
             '*' -> addToken(STAR)
-            '!' -> {
-                addToken(if (match('=')) BANG_EQUAL else BANG)
-            }
-            '=' -> {
-                addToken(if (match('=')) EQUAL_EQUAL else EQUAL)
-            }
-            '<' -> {
-                addToken(if (match('=')) LESS_EQUAL else LESS)
-            }
-            '>' -> {
-                addToken(if (match('=')) GREATER_EQUAL else GREATER)
-            }
+            '!' -> addToken(if (match('=')) BANG_EQUAL else BANG)
+            '=' -> addToken(if (match('=')) EQUAL_EQUAL else EQUAL)
+            '<' -> addToken(if (match('=')) LESS_EQUAL else LESS)
+            '>' -> addToken(if (match('=')) GREATER_EQUAL else GREATER)
             '/' -> {
                 if (match('/')) {
                     // A comment goes until the end of the line.
@@ -92,13 +83,9 @@ class Scanner(private val source: String) {
                     addToken(SLASH)
                 }
             }
-            ' ', '\r', '\t' -> { /* Ignore whitespace. */ }
+            ' ', '\r', '\t' -> {} // Ignore whitespace.
             '\n' -> line++
-            '"' -> {
-                string()
-            }
-
-            // TODO: string(), number(), identifier(), error()
+            '"' -> string()
             else -> {
                 if (isDigit(c)) {
                     number()

@@ -118,8 +118,7 @@ class AstPrinter : Expr.Visitor<String>, Stmt.Visitor<String> {
     override fun visitPrintStmt(stmt: Stmt.Print): String = parenthesize("print", stmt.expression)
 
     override fun visitReturnStmt(stmt: Stmt.Return): String {
-        if (stmt.value == null) return "(return)"
-        return parenthesize("return", stmt.value)
+        return stmt.value?.let { parenthesize("return", it) } ?: "(return)"
     }
 
     override fun visitVarStmt(stmt: Stmt.Var): String {

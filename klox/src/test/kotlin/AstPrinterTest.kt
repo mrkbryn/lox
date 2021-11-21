@@ -6,11 +6,19 @@ internal class AstPrinterTest {
     @Test
     fun testBinaryExpr() {
         val expression = Expr.Binary(
-            Expr.Literal(100),
-            Token(TokenType.PLUS, "+", null, 1),
-            Expr.Literal(200)
+            left = Expr.Literal(100),
+            operator = Token(
+                type = TokenType.PLUS,
+                lexeme = "+",
+                literal = null,
+                line = 1
+            ),
+            right = Expr.Literal(200)
         )
-        assertEquals("(+ 100 200)", AstPrinter().print(expression))
+        assertEquals(
+            "(+ 100 200)",
+            AstPrinter().print(expression)
+        )
     }
 
     @Test
@@ -23,8 +31,18 @@ internal class AstPrinterTest {
 
     @Test
     fun testGroupingExpr() {
-        val expression = Expr.Grouping(Expr.Grouping(Expr.Grouping(Expr.Literal("x"))))
-        assertEquals("(group (group (group x)))", AstPrinter().print(expression))
+        val expression =
+            Expr.Grouping(
+                Expr.Grouping(
+                    Expr.Grouping(
+                        Expr.Literal("x")
+                    )
+                )
+            )
+        assertEquals(
+            "(group (group (group x)))",
+            AstPrinter().print(expression)
+        )
     }
 
     @Test
@@ -33,8 +51,13 @@ internal class AstPrinterTest {
             Expr.Literal(true),
             Token(TokenType.AND, "and", null, 1),
             Expr.Binary(
-                Expr.Literal(10),
-                Token(TokenType.LESS_EQUAL, "<=", null, 1),
+                left = Expr.Literal(10),
+                operator = Token(
+                    type = TokenType.LESS_EQUAL,
+                    lexeme = "<=",
+                    literal = null,
+                    line = 1
+                ),
                 Expr.Literal(15)
             )
         )
@@ -43,24 +66,50 @@ internal class AstPrinterTest {
 
     @Test
     fun testExpr() {
-        val expression = Expr.Binary(
-            Expr.Unary(
-                Token(TokenType.MINUS, "-", null, 1),
-                Expr.Literal(123)),
-            Token(TokenType.STAR, "*", null, 1),
-            Expr.Grouping(Expr.Literal(45.67)))
+        val expression =
+            Expr.Binary(
+                left = Expr.Unary(
+                    Token(
+                        type = TokenType.MINUS,
+                        lexeme = "-",
+                        literal = null,
+                        line = 1
+                    ),
+                    Expr.Literal(value = 123)
+                ),
+                operator = Token(
+                    type = TokenType.STAR,
+                    lexeme = "*",
+                    literal = null,
+                    line = 1
+                ),
+                right = Expr.Grouping(
+                    Expr.Literal(45.67)
+                )
+            )
 
-        assertEquals("(* (- 123) (group 45.67))", AstPrinter().print(expression))
+        assertEquals(
+            "(* (- 123) (group 45.67))",
+            AstPrinter().print(expression)
+        )
 
         val statement = Stmt.Print(expression)
-        assertEquals("(print (* (- 123) (group 45.67)))", AstPrinter().print(statement))
+        assertEquals(
+            "(print (* (- 123) (group 45.67)))",
+            AstPrinter().print(statement)
+        )
     }
 
     @Test
     fun testAssignExpr() {
         val expression = Expr.Assign(
-            Token(TokenType.IDENTIFIER, "x", "x", 1),
-            Expr.Literal(20)
+            name = Token(
+                type = TokenType.IDENTIFIER,
+                lexeme = "x",
+                literal = "x",
+                line = 1
+            ),
+            value = Expr.Literal(20)
         )
         // TODO: why do we have an extra space here?
         assertEquals("(x :=  20)", AstPrinter().print(expression))
@@ -68,10 +117,19 @@ internal class AstPrinterTest {
 
     @Test
     fun testUnaryExpr() {
-        val expression = Expr.Unary(
-            Token(TokenType.MINUS, "-", null, 1),
-            Expr.Literal(102.5)
+        val expression =
+            Expr.Unary(
+                operator = Token(
+                    type = TokenType.MINUS,
+                    lexeme = "-",
+                    literal = null,
+                    line = 1
+                ),
+                right = Expr.Literal(102.5)
+            )
+        assertEquals(
+            "(- 102.5)",
+            AstPrinter().print(expression)
         )
-        assertEquals("(- 102.5)", AstPrinter().print(expression))
     }
 }

@@ -133,23 +133,22 @@ class Parser(val tokens: List<Token>) {
     /**
      * `expression -> assignment ;`
      */
-    private fun expression(): Expr {
-        // expression -> assignment ;
-        return assignment()
-    }
+    private fun expression(): Expr = assignment()
 
     /**
      * `declaration -> classDecl | funDecl | varDecl | statement ;`
      */
     private fun declaration(): Stmt? {
-        try {
-            if (match(CLASS)) return classDeclaration()
-            if (match(FUN)) return function("function")
-            if (match(VAR)) return varDeclaration()
-            return statement()
+        return try {
+            when {
+                match(CLASS) -> classDeclaration()
+                match(FUN) -> function("function")
+                match(VAR) -> varDeclaration()
+                else -> statement()
+            }
         } catch (error: ParseError) {
             synchronize()
-            return null
+            null
         }
     }
 
@@ -457,23 +456,26 @@ class Parser(val tokens: List<Token>) {
      *           | "super" "." IDENTIFIER ;
      */
     private fun primary(): Expr {
-        when {
-            match(FALSE) -> return Expr.Literal(false)
-            match(TRUE) -> return Expr.Literal(true)
-            match(NIL) -> return Expr.Literal(null)
-            match(NUMBER, STRING) -> return Expr.Literal(previous().literal)
+        return when {
+            match(FALSE) -> Expr.Literal(value = false)
+            match(TRUE) -> Expr.Literal(value = true)
+            match(NIL) -> Expr.Literal(value = null)
+            match(NUMBER, STRING) -> Expr.Literal(value = previous().literal)
             match(SUPER) -> {
                 val keyword = previous()
                 consume(DOT, "Expect '.' after 'super'.")
                 val method = consume(IDENTIFIER, "Expect superclass method name.")
-                return Expr.Super(keyword, method)
+                Expr.Super(
+                    keyword = keyword,
+                    method = method
+                )
             }
-            match(THIS) -> return Expr.This(previous())
-            match(IDENTIFIER) -> return Expr.Variable(previous())
+            match(THIS) -> Expr.This(previous())
+            match(IDENTIFIER) -> Expr.Variable(previous())
             match(LEFT_PAREN) -> {
                 val expr = expression()
                 consume(RIGHT_PAREN, "Expect ')' after expression.")
-                return Expr.Grouping(expr)
+                Expr.Grouping(expr)
             }
             else -> {
                 // Throw ParseError.
