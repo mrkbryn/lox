@@ -130,16 +130,3 @@ class AstPrinter : Expr.Visitor<String>, Stmt.Visitor<String> {
 
     override fun visitWhileStmt(stmt: Stmt.While): String = parenthesize2("while", stmt.condition, stmt.body)
 }
-
-fun main() {
-    val expression = Expr.Binary(
-        Expr.Unary(
-            Token(TokenType.MINUS, "-", null, 1),
-            Expr.Literal(123)),
-        Token(TokenType.STAR, "*", null, 1),
-        Expr.Grouping(Expr.Literal(45.67)))
-    println(AstPrinter().print(expression))
-
-    val statement = Stmt.Print(expression)
-    println(AstPrinter().print(statement))
-}
