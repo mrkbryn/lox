@@ -1,3 +1,5 @@
+package com.mab.lox
+
 import com.mab.lox.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test

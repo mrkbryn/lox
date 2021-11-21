@@ -8,6 +8,8 @@ plugins {
 group = "com.mab"
 version = "1.0-SNAPSHOT"
 
+val kotestVersion = "4.6.3"
+
 repositories {
     mavenCentral()
 }
@@ -15,9 +17,13 @@ repositories {
 dependencies {
     implementation("org.junit.jupiter:junit-jupiter:5.4.2")
     testImplementation(kotlin("test"))
+
+    // Kotest
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    testImplementation("io.kotest:kotest-property:$kotestVersion")
 }
 
-tasks.test {
+tasks.withType<Test> {
     useJUnitPlatform()
 }
 
