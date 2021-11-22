@@ -41,7 +41,7 @@ fun main(args: Array<String>) {
 }
 
 fun defineAst(outputDir: String, baseName: String, types: List<String>) {
-    val path = "$outputDir/${baseName.toLowerCase()}.kt"
+    val path = "$outputDir/${baseName}.kt"
     val writer = PrintWriter(path, "UTF-8")
 
     writer.println("package com.mab.lox")

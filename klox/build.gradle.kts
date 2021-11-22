@@ -47,7 +47,7 @@ application {
 
 task("generateAst", JavaExec::class) {
     description = "Runs the GenerateAst script to output the Kotlin AST files for Expr, Stmt."
-    main = "com.mab.lox.Generate_astKt"
+    main = "com.mab.lox.tools.GenerateAstKt"
     classpath = sourceSets["main"].runtimeClasspath
-    args = listOf("src/main/kotlin")
+    args = listOf("src/main/kotlin/com/mab/lox")
 }
