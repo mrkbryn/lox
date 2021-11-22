@@ -9,7 +9,7 @@ import com.mab.lox.utils.stringify
 
 class Interpreter : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
     private val globals: Environment = Environment()
-    private var environment: Environment = globals
+    private var environment: Environment
     private val locals: MutableMap<Expr, Int> = mutableMapOf()
 
     init {
@@ -17,6 +17,7 @@ class Interpreter : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
         LoxStandardLib.globalFunctions.forEach { (name, function) ->
             globals.define(name, function)
         }
+        environment = globals
     }
 
     fun interpret(statements: List<Stmt>) {

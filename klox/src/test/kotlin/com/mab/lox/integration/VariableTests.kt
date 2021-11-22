@@ -21,7 +21,10 @@ class VariableTests : ShouldSpec({
             var x = 10;
             print x;
         """.trimIndent()
-        runScript(source).trim() shouldBe "10"
+        runScript(source) shouldBe """
+            10
+            
+        """.trimIndent()
     }
 
     should("reassign variables") {
@@ -30,6 +33,9 @@ class VariableTests : ShouldSpec({
             x = 20;
             print x;
         """.trimIndent()
-        runScript(source).trim() shouldBe "20"
+        runScript(source) shouldBe """
+            20
+            
+        """.trimIndent()
     }
 })
