@@ -6,10 +6,33 @@ import io.kotest.matchers.shouldBe
 
 class StringTests : ShouldSpec({
     should("parse and print strings") {
-        runScript("print \"foobar\";") shouldBe "foobar\n"
+        val source = """
+            print "foobar";
+        """.trimIndent()
+        runScript(source) shouldBe """
+            foobar
+            
+        """.trimIndent()
     }
 
     should("concatenate strings") {
-        runScript("print \"foo\" + \"bar\" + \"bar\";") shouldBe "foobarbar\n"
+        val source = """
+            print "foo" + "bar" + "bar";
+        """.trimIndent()
+        runScript(source) shouldBe """
+            foobarbar
+            
+        """.trimIndent()
+    }
+
+    should("error on unterminated strings") {
+        val source = """
+            print "this string is never closed!
+        """.trimIndent()
+        runScript(source) shouldBe """
+            [line 1] Error: Unterminated string.
+            [line 1] Error at end: Expect expression.
+            
+        """.trimIndent()
     }
 })
