@@ -95,4 +95,26 @@ class ScannerTest : ShouldSpec({
             TokenType.EOF
         )
     }
+
+    should("count line numbers") {
+        val tokens = Scanner("x1\nx2\nx3")
+            .scanTokens()
+        tokens[0].line shouldBe 1
+        tokens[1].line shouldBe 2
+        tokens[2].line shouldBe 3
+    }
+
+    should("count line numbers for multiline strings") {
+        val tokens = Scanner("\"test multiline\nstring...even more\nlines...\"\nx1")
+            .scanTokens()
+        tokens[0].type shouldBe TokenType.STRING
+        // Multi-line string tokens take the highest line number they exist on.
+        tokens[0].line shouldBe 3
+        tokens[0].literal shouldBe "test multiline\nstring...even more\nlines..."
+
+        tokens[1].type shouldBe TokenType.IDENTIFIER
+        tokens[1].lexeme shouldBe "x1"
+
+        tokens[2].type shouldBe TokenType.EOF
+    }
 })
