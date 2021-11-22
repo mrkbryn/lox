@@ -96,6 +96,13 @@ class ScannerTest : ShouldSpec({
         )
     }
 
+    should("ignore whitespace") {
+        val tokens = Scanner(" \r\t")
+            .scanTokens()
+            .map { it.type }
+        tokens shouldBe listOf(TokenType.EOF)
+    }
+
     should("count line numbers") {
         val tokens = Scanner("x1\nx2\nx3")
             .scanTokens()

@@ -7,7 +7,7 @@ import kotlin.system.exitProcess
 
 class LoxStandardLib {
     companion object {
-        val global_functions = mapOf(
+        val globalFunctions = mapOf(
             "clock" to LoxClock(),
             "exit" to LoxExit(),
             "print" to LoxPrint(),

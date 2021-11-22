@@ -24,3 +24,9 @@ fun stringify(obj: Any?): String {
 
     return obj.toString()
 }
+
+fun isAlpha(c: Char) = (c in 'a'..'z') || (c in 'A'..'Z') || c == '_'
+
+fun isDigit(c: Char) = c in '0'..'9'
+
+fun isAlphaNumeric(c: Char) = isAlpha(c) || isDigit(c)

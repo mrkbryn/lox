@@ -15,7 +15,7 @@ class Interpreter(
 
     init {
         // Populate global functions from Lox's standard library.
-        LoxStandardLib.global_functions.forEach { (name, function) ->
+        LoxStandardLib.globalFunctions.forEach { (name, function) ->
             globals.define(name, function)
         }
     }
