@@ -4,14 +4,15 @@ import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
 fun runScript(source: String): String {
-    // TODO: redirect System.err?
     // Save old PrintStream
-    val printStreamOld = System.out
+    val printStreamSysOut = System.out
+    val printStreamSysErr = System.err
 
     // Redirect stdout to a new PrintStream
     val byteArrayOutputStream = ByteArrayOutputStream()
     val printStream = PrintStream(byteArrayOutputStream)
     System.setOut(printStream)
+    System.setErr(printStream)
     try {
         // TODO: should we inject some stdout module to capture print statements?
         Lox.run(source)
@@ -20,7 +21,9 @@ fun runScript(source: String): String {
     } finally {
         // Cleanup and reset System.out
         System.out.flush()
-        System.setOut(printStreamOld)
+        System.err.flush()
+        System.setOut(printStreamSysOut)
+        System.setErr(printStreamSysErr)
     }
 
     return byteArrayOutputStream.toString()
