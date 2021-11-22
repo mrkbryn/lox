@@ -18,4 +18,15 @@ class MathTests : ShouldSpec({
         runScript("print 2.5 * 4;").trim() shouldBe "10"
         runScript("print 2.2 * 2;").trim() shouldBe "4.4"
     }
+
+    should("validate number operands") {
+        val source = """
+            print 5 + "hello";
+        """.trimIndent()
+        runScript(source) shouldBe """
+            Operands must be two numbers or two strings. 
+            [line 1]
+            
+        """.trimIndent()
+    }
 })

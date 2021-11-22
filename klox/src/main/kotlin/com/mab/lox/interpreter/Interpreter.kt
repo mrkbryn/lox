@@ -7,10 +7,9 @@ import com.mab.lox.utils.isEqual
 import com.mab.lox.utils.isTruthy
 import com.mab.lox.utils.stringify
 
-class Interpreter(
-    private var environment: Environment = Environment()
-) : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
+class Interpreter : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
     private val globals: Environment = Environment()
+    private var environment: Environment = globals
     private val locals: MutableMap<Expr, Int> = mutableMapOf()
 
     init {
