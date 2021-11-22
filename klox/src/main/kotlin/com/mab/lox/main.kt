@@ -37,11 +37,10 @@ class Lox {
         }
 
         private fun run(source: String) {
-            val scanner = Scanner(source)
-            val tokens = scanner.scanTokens()
-
-            val parser = Parser(tokens)
-            val statements = parser.parse()
+            val tokens = Scanner(source)
+                .scanTokens()
+            val statements = Parser(tokens)
+                .parse()
 
             // Stop if there was a syntax error.
             if (hadError) return

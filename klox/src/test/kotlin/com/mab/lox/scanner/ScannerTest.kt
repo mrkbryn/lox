@@ -30,6 +30,13 @@ class ScannerTest : ShouldSpec({
         )
     }
 
+    should("scan identifiers") {
+        val tokens = Scanner("pi")
+            .scanTokens()
+        tokens[0].type shouldBe TokenType.IDENTIFIER
+        tokens[0].lexeme shouldBe "pi"
+    }
+
     should("scan single-character tokens") {
         val tokenTypes = Scanner("( ) { } , . - + ; * ! != = == < <= > >= /")
             .scanTokens()
@@ -70,5 +77,22 @@ class ScannerTest : ShouldSpec({
             .scanTokens()
         tokens[0].type shouldBe TokenType.NUMBER
         tokens[0].literal shouldBe 10
+    }
+
+    should("scan Strings") {
+        val tokens = Scanner("\"foobar\"")
+            .scanTokens()
+        tokens[0].type shouldBe TokenType.STRING
+        tokens[0].literal shouldBe "foobar"
+    }
+
+    should("ignore comments") {
+        val tokens = Scanner("// Comment, comment, comment, ...\n10")
+            .scanTokens()
+            .map { it.type }
+        tokens shouldBe listOf(
+            TokenType.NUMBER,
+            TokenType.EOF
+        )
     }
 })

@@ -6,7 +6,7 @@ package com.mab.lox
  */
 class LoxInstance(
     private val klass: LoxClass,
-    private val fields: HashMap<String, Any?> = HashMap()
+    private val fields: MutableMap<String, Any?> = mutableMapOf()
 ) {
     /**
      * Returns either the property or class method for the given token.
