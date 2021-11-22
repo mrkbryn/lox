@@ -158,6 +158,7 @@ class Scanner(private val source: String) {
             while (isDigit(peek())) advance()
         }
 
+        // TODO: handle integer overflow?
         val literalStr = source.substring(start, current)
         val literal = if (isInt) literalStr.toInt() else literalStr.toDouble()
         addToken(NUMBER, literal)
