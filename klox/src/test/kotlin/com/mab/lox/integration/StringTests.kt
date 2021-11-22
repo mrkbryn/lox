@@ -1,4 +1,4 @@
-package integration
+package com.mab.lox.integration
 
 import com.mab.lox.runScript
 import io.kotest.core.spec.style.ShouldSpec
