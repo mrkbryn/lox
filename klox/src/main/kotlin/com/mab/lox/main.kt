@@ -36,7 +36,7 @@ class Lox {
             }
         }
 
-        private fun run(source: String) {
+        fun run(source: String) {
             val tokens = Scanner(source)
                 .scanTokens()
             val statements = Parser(tokens)
