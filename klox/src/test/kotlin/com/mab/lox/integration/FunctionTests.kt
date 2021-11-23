@@ -667,4 +667,15 @@ class FunctionTests : ShouldSpec({
             
         """.trimIndent()
     }
+
+    should("only be able to call functions and classes") {
+        val source = """
+            4();
+        """.trimIndent()
+        runScript(source) shouldBe """
+            Can only call functions and classes. 
+            [line 1]
+            
+        """.trimIndent()
+    }
 })
