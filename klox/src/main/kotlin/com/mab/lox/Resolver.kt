@@ -69,6 +69,7 @@ class Resolver(
         }
         resolve(function.body)
         endScope()
+        currentFunction = enclosingFunction
     }
 
     //
