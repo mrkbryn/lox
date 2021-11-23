@@ -25,6 +25,8 @@ class LoxClock : LoxCallable {
     override fun call(interpreter: Interpreter?, arguments: List<Any?>?): Any {
         return System.currentTimeMillis().toDouble() / 1000.0
     };
+
+    override fun toString(): String = "<native fn>"
 }
 
 /**
@@ -38,6 +40,8 @@ class LoxExit : LoxCallable {
         if (exitCode is Int) exitProcess(exitCode)
         throw Exception("Bad input arg")
     }
+
+    override fun toString(): String = "<native fn>"
 }
 
 /**
@@ -50,6 +54,8 @@ class LoxPrint : LoxCallable {
         println(arguments?.get(0))
         return null
     }
+
+    override fun toString(): String = "<native fn>"
 }
 
 /**
@@ -62,4 +68,6 @@ class LoxPrintErr : LoxCallable {
         System.err.println(arguments?.get(0))
         return null
     }
+
+    override fun toString(): String = "<native fn>"
 }
