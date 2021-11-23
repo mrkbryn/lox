@@ -45,7 +45,7 @@ class Interpreter : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
         locals[expr] = depth
     }
 
-    private fun executeBlock(statements: List<Stmt>, environment: Environment) {
+    fun executeBlock(statements: List<Stmt>, environment: Environment) {
         val previous = this.environment
         try {
             this.environment = environment
@@ -278,13 +278,19 @@ class Interpreter : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
             environment.define("super", superclass)
         }
 
-        val methods = hashMapOf<String, LoxFunction>()
-        stmt.methods.forEach { method ->
-            val function = LoxFunction(method, environment, method.name.lexeme.equals("init"))
-            methods[method.name.lexeme] = function
+        val methods = stmt.methods.associate { method ->
+            method.name.lexeme to LoxFunction(
+                declaration = method,
+                closure = environment,
+                isInitializer = method.name.lexeme == "init"
+            )
         }
 
-        val klass = LoxClass(stmt.name.lexeme, superclass as LoxClass, methods)
+        val klass = LoxClass(
+            name = stmt.name.lexeme,
+            superclass = superclass as LoxClass,
+            methods = methods
+        )
 
         if (superclass != null) {
             // Pop the environment to remove the "super" definition.

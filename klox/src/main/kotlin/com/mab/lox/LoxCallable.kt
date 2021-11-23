@@ -14,5 +14,5 @@ interface LoxCallable {
     /**
      * Executes the function with the given arguments lists.
      */
-    fun call(interpreter: Interpreter?, arguments: List<Any?>?): Any?
+    fun call(interpreter: Interpreter?, arguments: List<Any?>): Any?
 }

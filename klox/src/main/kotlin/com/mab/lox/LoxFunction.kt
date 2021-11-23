@@ -15,16 +15,25 @@ class LoxFunction(
     /**
      * Executes the function with the given arguments within the passed Interpreter.
      */
-    override fun call(interpreter: Interpreter?, arguments: List<Any?>?): Any? {
+    override fun call(interpreter: Interpreter?, arguments: List<Any?>): Any? {
         val environment = Environment(closure)
-        declaration.params.forEachIndexed { index, param ->
-            if (arguments != null) {
-                environment.define(param.lexeme, arguments[index])
-            }
+        declaration.params.forEachIndexed { i, param ->
+            environment.define(
+                name = param.lexeme,
+                value = arguments[i]
+            )
         }
 
-        // TODO
+        try {
+            interpreter!!.executeBlock(declaration.body, environment)
+        } catch (returnValue: Return) {
+            if (isInitializer) {
+                return closure.getAt(0, "this");
+            }
+            return returnValue.value
+        }
 
+        if (isInitializer) return closure.getAt(0, "this")
         return null
     }
 

@@ -22,7 +22,7 @@ class LoxStandardLib {
 class LoxClock : LoxCallable {
     override fun arity(): Int = 0
 
-    override fun call(interpreter: Interpreter?, arguments: List<Any?>?): Any {
+    override fun call(interpreter: Interpreter?, arguments: List<Any?>): Any {
         return System.currentTimeMillis().toDouble() / 1000.0
     };
 
@@ -35,7 +35,7 @@ class LoxClock : LoxCallable {
 class LoxExit : LoxCallable {
     override fun arity(): Int = 1
 
-    override fun call(interpreter: Interpreter?, arguments: List<Any?>?): Any? {
+    override fun call(interpreter: Interpreter?, arguments: List<Any?>): Any? {
         val exitCode = arguments?.get(0)
         if (exitCode is Int) exitProcess(exitCode)
         throw Exception("Bad input arg")
@@ -50,7 +50,7 @@ class LoxExit : LoxCallable {
 class LoxPrint : LoxCallable {
     override fun arity(): Int = 1
 
-    override fun call(interpreter: Interpreter?, arguments: List<Any?>?): Any? {
+    override fun call(interpreter: Interpreter?, arguments: List<Any?>): Any? {
         println(arguments?.get(0))
         return null
     }
@@ -64,7 +64,7 @@ class LoxPrint : LoxCallable {
 class LoxPrintErr : LoxCallable {
     override fun arity(): Int = 1
 
-    override fun call(interpreter: Interpreter?, arguments: List<Any?>?): Any? {
+    override fun call(interpreter: Interpreter?, arguments: List<Any?>): Any? {
         System.err.println(arguments?.get(0))
         return null
     }

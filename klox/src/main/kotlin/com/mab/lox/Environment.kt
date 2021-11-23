@@ -1,13 +1,13 @@
 package com.mab.lox
 
 class Environment(val enclosing: Environment? = null) {
-    private val values = HashMap<String, Any?>()
+    private val values: MutableMap<String, Any?> = mutableMapOf()
 
     fun define(name: String, value: Any?) {
         values[name] = value
     }
 
-    fun ancestor(distance: Int): Environment {
+    private fun ancestor(distance: Int): Environment {
         var environment = this
         for (i in 0 until distance) {
             environment = environment.enclosing!!
@@ -47,5 +47,9 @@ class Environment(val enclosing: Environment? = null) {
         }
 
         throw RuntimeError(name, "Undefined variable '${name.lexeme}'.")
+    }
+
+    override fun toString(): String {
+        return "$values${if (enclosing != null) " -> ${enclosing.toString()}" else ""}"
     }
 }
