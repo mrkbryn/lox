@@ -4,6 +4,9 @@ import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
 fun runScript(source: String): String {
+    // TODO: determine better pattern to clear runtime state from previous tests.
+    Lox.resetRuntime()
+
     // Save old PrintStream
     val printStreamSysOut = System.out
     val printStreamSysErr = System.err
@@ -15,7 +18,7 @@ fun runScript(source: String): String {
     System.setErr(printStream)
     try {
         // TODO: should we inject some stdout module to capture print statements?
-        Lox.run(source)
+        Lox.loxRuntime.run(source)
     } catch (e: Exception) {
         // Ignore.
     } finally {

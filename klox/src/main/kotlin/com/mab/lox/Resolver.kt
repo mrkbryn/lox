@@ -39,7 +39,7 @@ class Resolver(
 
         val scope = scopes.peek()
         if (scope.containsKey(name.lexeme)) {
-            Lox.error(name, "Already a variable with this name is in scope.")
+            Lox.loxRuntime.error(name, "Already a variable with this name is in scope.")
         }
         scope[name.lexeme] = false
     }
@@ -91,7 +91,7 @@ class Resolver(
         define(stmt.name)
 
         if (stmt.superclass != null && stmt.name.lexeme == stmt.superclass.name.lexeme) {
-            Lox.error(stmt.superclass.name, "A class can't inherit from itself.")
+            Lox.loxRuntime.error(stmt.superclass.name, "A class can't inherit from itself.")
         }
         if (stmt.superclass != null) {
             currentClass = ClassType.SUBCLASS
@@ -158,12 +158,12 @@ class Resolver(
 
     override fun visitReturnStmt(stmt: Stmt.Return): Void? {
         if (currentFunction == FunctionType.NONE) {
-            Lox.error(stmt.keyword, "Can't return from top-level code.")
+            Lox.loxRuntime.error(stmt.keyword, "Can't return from top-level code.")
         }
 
         if (stmt.value != null) {
             if (currentFunction == FunctionType.INITIALIZER) {
-                Lox.error(stmt.keyword, "Can't return a value from an initializer.")
+                Lox.loxRuntime.error(stmt.keyword, "Can't return a value from an initializer.")
             }
             resolve(stmt.value)
         }
@@ -237,9 +237,9 @@ class Resolver(
 
     override fun visitSuperExpr(expr: Expr.Super): Void? {
         if (currentClass == ClassType.NONE) {
-            Lox.error(expr.keyword, "Can't use 'super' outside of a class.")
+            Lox.loxRuntime.error(expr.keyword, "Can't use 'super' outside of a class.")
         } else if (currentClass != ClassType.SUBCLASS) {
-            Lox.error(expr.keyword, "Can't use 'super' in a class with no superclass.")
+            Lox.loxRuntime.error(expr.keyword, "Can't use 'super' in a class with no superclass.")
         }
         resolveLocal(expr, expr.keyword)
         return null
@@ -247,7 +247,7 @@ class Resolver(
 
     override fun visitThisExpr(expr: Expr.This): Void? {
         if (currentClass == ClassType.NONE) {
-            Lox.error(expr.keyword, "Can't use 'this' outside of a class.")
+            Lox.loxRuntime.error(expr.keyword, "Can't use 'this' outside of a class.")
             return null
         }
 
@@ -262,7 +262,7 @@ class Resolver(
 
     override fun visitVariableExpr(expr: Expr.Variable): Void? {
         if (!scopes.isEmpty() && scopes.peek()[expr.name.lexeme] == false) {
-            Lox.error(expr.name, "Can't read local variable in its own initializer.")
+            Lox.loxRuntime.error(expr.name, "Can't read local variable in its own initializer.")
         }
 
         resolveLocal(expr, expr.name)

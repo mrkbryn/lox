@@ -111,7 +111,7 @@ class Parser(val tokens: List<Token>) {
     private fun previous() = tokens[current-1]
 
     private fun error(token: Token, message: String): ParseError {
-        Lox.error(token, message)
+        Lox.loxRuntime.error(token, message)
         return ParseError()
     }
 

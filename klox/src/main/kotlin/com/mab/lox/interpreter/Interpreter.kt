@@ -24,7 +24,7 @@ class Interpreter : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
         try {
             statements.forEach { execute(it) }
         } catch (error: RuntimeError) {
-            Lox.runtimeError(error)
+            Lox.loxRuntime.runtimeError(error)
         }
     }
 
