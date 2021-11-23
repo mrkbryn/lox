@@ -36,7 +36,8 @@ class FunctionTests : ShouldSpec({
             f(1, 2, 3, 4);
         """.trimIndent()
         runScript(source) shouldBe """
-            runtime error: Expected 2 arguments but got 4.
+            Expected 2 arguments but got 4. 
+            [line 6]
             
         """.trimIndent()
     }
@@ -47,7 +48,8 @@ class FunctionTests : ShouldSpec({
             f(1);
         """.trimIndent()
         runScript(source) shouldBe """
-            [line 2] runtime error: Expected 2 arguments but got 1.
+            Expected 2 arguments but got 1. 
+            [line 2]
             
         """.trimIndent()
     }
