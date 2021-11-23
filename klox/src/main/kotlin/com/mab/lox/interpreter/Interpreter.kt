@@ -307,8 +307,15 @@ class Interpreter : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
     }
 
     override fun visitFunctionStmt(stmt: Stmt.Function): Void? {
-        val function = LoxFunction(stmt, environment, false)
-        environment.define(stmt.name.lexeme, function)
+        val function = LoxFunction(
+            declaration = stmt,
+            closure = environment,
+            isInitializer = false
+        )
+        environment.define(
+            name = stmt.name.lexeme,
+            value = function
+        )
         return null
     }
 

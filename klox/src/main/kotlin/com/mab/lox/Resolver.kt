@@ -38,7 +38,7 @@ class Resolver(
         if (scopes.isEmpty()) return
 
         val scope = scopes.peek()
-        if (!scope.containsKey(name.lexeme)) {
+        if (scope.containsKey(name.lexeme)) {
             Lox.error(name, "Already a variable with this name is in scope.")
         }
         scope[name.lexeme] = false
