@@ -236,7 +236,7 @@ class Interpreter : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
     override fun visitUnaryExpr(expr: Expr.Unary): Any? {
         val right = evaluate(expr.right)
         return when (expr.operator.type) {
-            BANG -> isTruthy(right)
+            BANG -> !isTruthy(right)
             MINUS -> {
                 checkNumberOperands(expr.operator, right)
                 when (right) {
