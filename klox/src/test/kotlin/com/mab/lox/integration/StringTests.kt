@@ -35,4 +35,29 @@ class StringTests : ShouldSpec({
             
         """.trimIndent()
     }
+
+    should("parse multiline strings") {
+        val source = """
+            var a = "1
+            2
+            3";
+            print a;
+        """.trimIndent()
+        runScript(source) shouldBe """
+            1
+            2
+            3
+            
+        """.trimIndent()
+    }
+
+    should("handle unicode strings") {
+        val source = """
+            print "A~¶Þॐஃ"; // expect: A~¶Þॐஃ
+        """.trimIndent()
+        runScript(source) shouldBe """
+            A~¶Þॐஃ
+            
+        """.trimIndent()
+    }
 })
