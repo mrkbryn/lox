@@ -59,4 +59,55 @@ class ClassTests : ShouldSpec({
             
         """.trimIndent()
     }
+
+    should("handle local inheritance (local_inherit_other.lox)") {
+        val source = """
+            class A {}
+            
+            fun f() {
+                class B < A {}
+                return B;
+            }
+            
+            print f();
+        """.trimIndent()
+        runScript(source) shouldBe """
+            B
+            
+        """.trimIndent()
+    }
+
+    should("allow returning self locally (local_reference_self.lox)") {
+        val source = """
+            {
+                class Foo {
+                    returnSelf() {
+                        return Foo;
+                    }
+                }
+                
+                print Foo().returnSelf();
+            }
+        """.trimIndent()
+        runScript(source) shouldBe """
+            Foo
+            
+        """.trimIndent()
+    }
+
+    should("allow returning self (reference_self.lox)") {
+        val source = """
+            class Foo {
+                returnSelf() {
+                    return Foo;
+                }
+            }
+            
+            print Foo().returnSelf();
+        """.trimIndent()
+        runScript(source) shouldBe """
+            Foo
+            
+        """.trimIndent()
+    }
 })
