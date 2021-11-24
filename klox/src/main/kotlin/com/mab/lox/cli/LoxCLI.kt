@@ -1,4 +1,4 @@
-package com.mab.lox
+package com.mab.lox.cli
 
 import com.mab.lox.interpreter.LoxRuntime
 

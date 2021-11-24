@@ -1,6 +1,7 @@
 package com.mab.lox.interpreter
 
 import com.mab.lox.*
+import com.mab.lox.error.RuntimeError
 import com.mab.lox.scanner.Scanner
 import java.io.BufferedReader
 import java.io.InputStreamReader

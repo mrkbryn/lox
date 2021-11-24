@@ -2,6 +2,8 @@ package com.mab.lox.interpreter
 
 import com.mab.lox.*
 import com.mab.lox.TokenType.*
+import com.mab.lox.cli.Lox
+import com.mab.lox.error.RuntimeError
 import com.mab.lox.stdlib.LoxStandardLib
 import com.mab.lox.utils.isEqual
 import com.mab.lox.utils.isTruthy

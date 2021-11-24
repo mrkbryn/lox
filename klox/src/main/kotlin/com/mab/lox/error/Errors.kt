@@ -1,4 +1,6 @@
-package com.mab.lox
+package com.mab.lox.error
+
+import com.mab.lox.Token
 
 /**
  * Errors indicating a Lox runtime check.

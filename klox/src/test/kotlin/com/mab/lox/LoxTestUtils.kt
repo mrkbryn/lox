@@ -1,5 +1,6 @@
 package com.mab.lox
 
+import com.mab.lox.cli.Lox
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 

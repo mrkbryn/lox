@@ -1,6 +1,8 @@
 package com.mab.lox
 
 import com.mab.lox.TokenType.*
+import com.mab.lox.cli.Lox
+import com.mab.lox.error.ParseError
 
 const val MAX_ARGUMENT_COUNT = 255
 
@@ -76,7 +78,7 @@ const val MAX_ARGUMENT_COUNT = 255
  *      DIGIT           -> "0" ... "9" ;
  * ```
  */
-class Parser(val tokens: List<Token>) {
+class Parser(private val tokens: List<Token>) {
     private var current = 0
 
     private fun match(vararg types: TokenType): Boolean {
