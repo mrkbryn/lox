@@ -521,13 +521,13 @@ class Parser(private val tokens: List<Token>) {
         var expr = primary()
 
         while (true) {
-            when {
+            expr = when {
                 match(LEFT_PAREN) -> {
-                    expr = finishCall(expr)
+                    finishCall(expr)
                 }
                 match(DOT) -> {
                     val name = consume(IDENTIFIER, "Expect property name after '.'.")
-                    expr = Expr.Get(
+                    Expr.Get(
                         obj = expr,
                         name = name
                     )

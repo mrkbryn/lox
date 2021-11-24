@@ -17,10 +17,10 @@ class LoxFunction(
      */
     override fun call(interpreter: Interpreter?, arguments: List<Any?>): Any? {
         val environment = Environment(closure)
-        declaration.params.forEachIndexed { i, param ->
+        declaration.params.zip(arguments) { param, arg ->
             environment.define(
                 name = param.lexeme,
-                value = arguments[i]
+                value = arg
             )
         }
 
