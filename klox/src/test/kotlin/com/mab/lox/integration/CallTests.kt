@@ -46,7 +46,7 @@ class CallTests : ShouldSpec({
         """.trimIndent()
         runScript(source) shouldBe """
             Can only call functions and classes. 
-            [line 1]
+            [line 3]
             
         """.trimIndent()
     }
