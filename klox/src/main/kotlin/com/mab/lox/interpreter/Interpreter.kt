@@ -288,7 +288,7 @@ class Interpreter : Expr.Visitor<Any?>, Stmt.Visitor<Void?> {
 
         val klass = LoxClass(
             name = stmt.name.lexeme,
-            superclass = superclass as LoxClass,
+            superclass = if (superclass != null) superclass as LoxClass else null,
             methods = methods
         )
 
