@@ -110,4 +110,19 @@ class ClassTests : ShouldSpec({
             
         """.trimIndent()
     }
+
+    should("allow accessing object class") {
+        val source = """
+            class Foo {}
+            var x = Foo();
+            print x.klass;
+            var y = Foo();
+            print x.klass == y.klass;
+        """.trimIndent()
+        runScript(source) shouldBe """
+            Foo
+            true
+            
+        """.trimIndent()
+    }
 })

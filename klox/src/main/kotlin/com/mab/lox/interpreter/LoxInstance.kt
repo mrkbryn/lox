@@ -20,7 +20,17 @@ class LoxInstance(
         }
 
         val method = klass.findMethod(name.lexeme)
-        if (method != null) return method.bind(this)
+        if (method != null) {
+            return method.bind(this)
+        }
+
+        // Should built-in functions be wired in at creation time? Or is it better to have this lookup
+        // functionality built into the LoxInstance class.
+        // TODO: add parser support to allow CLASS keyword after DOT as property
+        if (name.lexeme == "klass") {
+            return klass
+        }
+
         throw RuntimeError(
             token = name,
             message = "Undefined property '${name.lexeme}'."
