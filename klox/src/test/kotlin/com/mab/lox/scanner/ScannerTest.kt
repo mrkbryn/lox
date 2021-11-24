@@ -37,7 +37,7 @@ class ScannerTest : ShouldSpec({
     }
 
     should("scan single-character tokens") {
-        val tokenTypes = Scanner("( ) { } , . - + ; * ! != = == < <= > >= /")
+        val tokenTypes = Scanner("( ) { } [ ] , . - + ; * ! != = == < <= > >= /")
             .scanTokens()
             .map { it.type }
         tokenTypes shouldBe listOf(
@@ -45,6 +45,8 @@ class ScannerTest : ShouldSpec({
             TokenType.RIGHT_PAREN,
             TokenType.LEFT_BRACE,
             TokenType.RIGHT_BRACE,
+            TokenType.LEFT_BRACKET,
+            TokenType.RIGHT_BRACKET,
             TokenType.COMMA,
             TokenType.DOT,
             TokenType.MINUS,
