@@ -1,4 +1,4 @@
-package com.mab.lox
+package com.mab.lox.interpreter
 
 import com.mab.lox.interpreter.Interpreter
 

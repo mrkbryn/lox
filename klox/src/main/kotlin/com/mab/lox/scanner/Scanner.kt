@@ -1,8 +1,6 @@
 package com.mab.lox.scanner
 
-import com.mab.lox.Token
-import com.mab.lox.TokenType
-import com.mab.lox.TokenType.*
+import com.mab.lox.scanner.TokenType.*
 import com.mab.lox.cli.Lox
 import com.mab.lox.utils.isAlpha
 import com.mab.lox.utils.isAlphaNumeric

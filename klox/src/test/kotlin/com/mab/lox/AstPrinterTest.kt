@@ -1,5 +1,7 @@
 package com.mab.lox
 
+import com.mab.lox.scanner.Token
+import com.mab.lox.scanner.TokenType
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 

@@ -1,6 +1,5 @@
 package com.mab.lox.scanner
 
-import com.mab.lox.TokenType
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.shouldBe
 

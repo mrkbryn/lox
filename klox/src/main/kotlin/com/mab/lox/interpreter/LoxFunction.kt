@@ -1,6 +1,6 @@
-package com.mab.lox
+package com.mab.lox.interpreter
 
-import com.mab.lox.interpreter.Interpreter
+import com.mab.lox.Stmt
 
 class LoxFunction(
     private val declaration: Stmt.Function,

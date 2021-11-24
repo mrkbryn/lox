@@ -1,7 +1,9 @@
-package com.mab.lox
+package com.mab.lox.interpreter
 
+import com.mab.lox.Expr
+import com.mab.lox.Stmt
+import com.mab.lox.scanner.Token
 import com.mab.lox.cli.Lox
-import com.mab.lox.interpreter.Interpreter
 import java.util.*
 import kotlin.collections.HashMap
 

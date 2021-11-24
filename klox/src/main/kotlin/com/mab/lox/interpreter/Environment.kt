@@ -1,6 +1,7 @@
-package com.mab.lox
+package com.mab.lox.interpreter
 
 import com.mab.lox.error.RuntimeError
+import com.mab.lox.scanner.Token
 
 class Environment(val enclosing: Environment? = null) {
     private val values: MutableMap<String, Any?> = mutableMapOf()

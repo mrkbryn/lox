@@ -1,6 +1,6 @@
 package com.mab.lox.stdlib
 
-import com.mab.lox.LoxCallable
+import com.mab.lox.interpreter.LoxCallable
 import com.mab.lox.interpreter.Interpreter
 import java.lang.Exception
 import kotlin.system.exitProcess

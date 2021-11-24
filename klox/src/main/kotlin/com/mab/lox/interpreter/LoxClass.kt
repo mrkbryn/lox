@@ -1,6 +1,4 @@
-package com.mab.lox
-
-import com.mab.lox.interpreter.Interpreter
+package com.mab.lox.interpreter
 
 /**
  * Representation of a class definition for the Lox language. The Lox class provides a default `init` class method

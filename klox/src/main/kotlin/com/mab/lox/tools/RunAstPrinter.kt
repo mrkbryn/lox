@@ -1,6 +1,8 @@
 package com.mab.lox.tools
 
 import com.mab.lox.*
+import com.mab.lox.scanner.Token
+import com.mab.lox.scanner.TokenType
 
 fun main() {
     val expression =

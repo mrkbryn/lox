@@ -1,5 +1,7 @@
 package com.mab.lox
 
+import com.mab.lox.scanner.Token
+
 abstract class Stmt {
     interface Visitor<R> {
         fun visitBlockStmt(stmt: Block): R

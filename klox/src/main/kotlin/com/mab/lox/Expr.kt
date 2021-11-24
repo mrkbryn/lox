@@ -1,5 +1,7 @@
 package com.mab.lox
 
+import com.mab.lox.scanner.Token
+
 abstract class Expr {
     interface Visitor<R> {
         fun visitAssignExpr(expr: Assign): R

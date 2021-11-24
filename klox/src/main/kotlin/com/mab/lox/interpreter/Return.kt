@@ -1,4 +1,4 @@
-package com.mab.lox
+package com.mab.lox.interpreter
 
 /**
  * Represents a return value from a function. Used to unwind the stack within a function call.

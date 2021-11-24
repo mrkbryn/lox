@@ -1,4 +1,4 @@
-package com.mab.lox
+package com.mab.lox.scanner
 
 enum class TokenType {
     // Single-character tokens.

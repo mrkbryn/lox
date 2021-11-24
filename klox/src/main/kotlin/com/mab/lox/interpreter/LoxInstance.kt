@@ -1,6 +1,7 @@
-package com.mab.lox
+package com.mab.lox.interpreter
 
 import com.mab.lox.error.RuntimeError
+import com.mab.lox.scanner.Token
 
 /**
  * Represents an instance of a LoxClass. LoxClass instances are simply a collection of properties to class properties
