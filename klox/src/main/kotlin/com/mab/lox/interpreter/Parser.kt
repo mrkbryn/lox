@@ -543,7 +543,8 @@ class Parser(private val tokens: List<Token>) {
 
     /**
      * `primary -> "true" | "false" | "nil" | "this" | NUMBER | STRING | IDENTIFIER | "(" expression ")"
-     *           | "super" "." IDENTIFIER ;
+     *           | "super" "." IDENTIFIER
+     *           | "[" ( expression? ( "," expression )* "]" ;
      */
     private fun primary(): Expr {
         return when {
@@ -566,6 +567,18 @@ class Parser(private val tokens: List<Token>) {
                 val expr = expression()
                 consume(RIGHT_PAREN, "Expect ')' after expression.")
                 Expr.Grouping(expression = expr)
+            }
+            match(LEFT_BRACKET) -> {
+                // Parse array with zero, one, or more items.
+                val itemExprs = mutableListOf<Expr>()
+                if (!check(RIGHT_BRACKET)) {
+                    itemExprs.add(expression())
+                    while (match(COMMA)) {
+                        itemExprs.add(expression())
+                    }
+                }
+                consume(RIGHT_BRACKET, "Expect ']' after array.")
+                Expr.Literal(true)
             }
             else -> {
                 // Throw ParseError.
