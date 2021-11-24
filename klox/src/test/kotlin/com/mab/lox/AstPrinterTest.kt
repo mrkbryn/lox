@@ -1,10 +1,9 @@
 package com.mab.lox
 
-import com.mab.lox.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-internal class AstPrinterTest {
+class AstPrinterTest {
     @Test
     fun testBinaryExpr() {
         val expression = Expr.Binary(
