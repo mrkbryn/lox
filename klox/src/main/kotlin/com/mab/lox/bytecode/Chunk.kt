@@ -31,12 +31,19 @@ class Chunk (
         println("$offset")
         val instruction = code[offset]
         return when (instruction) {
+            OpCode.OP_CONSTANT.byte -> constantInstruction("OP_CONSTANT", offset)
             OpCode.OP_RETURN.byte -> simpleInstruction("OP_RETURN", offset)
             else -> {
                 println("Unknown opcode $instruction")
                 return offset + 1
             }
         }
+    }
+
+    fun constantInstruction(name: String, offset: Int): Int {
+        val constant = code[offset + 1].toInt()
+        println("$name, $constant, ${constants.values[constant].formatForPrint()}")
+        return offset + 2
     }
 
     fun simpleInstruction(name: String, offset: Int): Int {

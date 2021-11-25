@@ -9,3 +9,7 @@ class ValueArray(
         values.add(value)
     }
 }
+
+fun Value.formatForPrint(): String {
+    return this.toString()
+}
