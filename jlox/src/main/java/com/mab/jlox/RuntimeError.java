@@ -1,4 +1,4 @@
-package lox;
+package com.mab.jlox;
 
 public class RuntimeError extends RuntimeException {
     final Token token;

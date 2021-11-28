@@ -1,9 +1,9 @@
-package lox;
+package com.mab.jlox;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import static lox.TokenType.*;
+import static com.mab.jlox.TokenType.*;
 
 public class Parser {
     private static class ParseError extends RuntimeException {}

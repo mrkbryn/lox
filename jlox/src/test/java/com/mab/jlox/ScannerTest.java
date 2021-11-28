@@ -1,11 +1,11 @@
-package lox;
+package com.mab.jlox;
 
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static lox.TokenType.*;
+import static com.mab.jlox.TokenType.*;
 
 class ScannerTest {
     List<Token> generateTokens(String source) {

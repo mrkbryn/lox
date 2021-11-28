@@ -1,6 +1,4 @@
-package lox;
-
-import org.junit.jupiter.api.Test;
+package com.mab.jlox;
 
 import java.util.List;
 

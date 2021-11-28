@@ -1,4 +1,4 @@
-package lox;
+package com.mab.jlox;
 
 public class Token {
     // TODO: include column and length information

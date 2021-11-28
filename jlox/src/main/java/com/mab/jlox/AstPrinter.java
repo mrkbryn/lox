@@ -1,4 +1,4 @@
-package lox;
+package com.mab.jlox;
 
 public class AstPrinter implements Expr.Visitor<String> {
     // TODO: implement Stmt.Visitor<String>

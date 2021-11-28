@@ -1,4 +1,4 @@
-package lox;
+package com.mab.jlox;
 
 public class AstPrinterRPN {
     // TODO: define a visitor class for the syntax tree that takes an expression, converts to RPN, and

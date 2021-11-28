@@ -1,4 +1,4 @@
-package lox;
+package com.mab.jlox;
 
 public class Return extends RuntimeException {
     final Object value;

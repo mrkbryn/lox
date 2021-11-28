@@ -1,6 +1,6 @@
 package tool;
 
-import lox.Lox;
+import com.mab.jlox.Lox;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
