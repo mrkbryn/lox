@@ -146,9 +146,15 @@ class AssignmentTests : ShouldSpec({
             var x = 1;
             x += 5;
             print x;
+            
+            var s = "hello";
+            s += ", ";
+            s += "world!";
+            print s;
         """.trimIndent()
         runScript(source) shouldBe """
             6
+            hello, world!
             
         """.trimIndent()
     }
@@ -185,6 +191,17 @@ class AssignmentTests : ShouldSpec({
         runScript(source) shouldBe """
             Operand(s) must be numbers. 
             [line 2]
+            
+        """.trimIndent()
+    }
+
+    should("disallow chained += operators") {
+        val source = """
+            var x = 10;
+            x += 1 += 2;
+        """.trimIndent()
+        runScript(source) shouldBe """
+            [line 2] Error at '+=': Invalid assignment target.
             
         """.trimIndent()
     }
