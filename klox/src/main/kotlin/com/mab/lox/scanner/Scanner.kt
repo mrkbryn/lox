@@ -76,7 +76,7 @@ class Scanner(private val source: String) {
             ']' -> addToken(RIGHT_BRACKET)
             ',' -> addToken(COMMA)
             '.' -> addToken(DOT)
-            '-' -> addToken(MINUS)
+            '-' -> addToken(if (match('=')) MINUS_EQUAL else MINUS)
             '+' -> addToken(if (match('=')) PLUS_EQUAL else PLUS)
             ';' -> addToken(SEMICOLON)
             '*' -> addToken(STAR)

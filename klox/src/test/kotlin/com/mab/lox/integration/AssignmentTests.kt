@@ -141,7 +141,7 @@ class AssignmentTests : ShouldSpec({
         """.trimIndent()
     }
 
-    should("handle add equals operator") {
+    should("handle += operator") {
         val source = """
             var x = 1;
             x += 5;
@@ -153,7 +153,39 @@ class AssignmentTests : ShouldSpec({
         """.trimIndent()
     }
 
-    should("check operands for add equals operator") {
+    should("handle -= operator") {
+        val source = """
+            var x = 10;
+            x -= 2;
+            print x;
+        """.trimIndent()
+        runScript(source) shouldBe """
+            8
+            
+        """.trimIndent()
+    }
 
+    should("check operands for += operator") {
+        val source = """
+            var x = 10;
+            x += "hello, world!";
+        """.trimIndent()
+        runScript(source) shouldBe """
+            Operands must be two numbers or two strings. 
+            [line 2]
+            
+        """.trimIndent()
+    }
+
+    should("check operands for -= operator") {
+        val source = """
+            var x = 10;
+            x -= "hello, world!";
+        """.trimIndent()
+        runScript(source) shouldBe """
+            Operand(s) must be numbers. 
+            [line 2]
+            
+        """.trimIndent()
     }
 })

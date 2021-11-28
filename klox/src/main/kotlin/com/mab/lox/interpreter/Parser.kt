@@ -374,16 +374,17 @@ class Parser(private val tokens: List<Token>) {
     private fun assignment(): Expr {
         val expr = or()
 
-        if (match(EQUAL, PLUS_EQUAL)) {
+        if (match(EQUAL, PLUS_EQUAL, MINUS_EQUAL)) {
             val equals = previous()
             var value = assignment()
 
             // Desugar += operator.
-            if (equals.type == PLUS_EQUAL) {
+            if (equals.type == PLUS_EQUAL || equals.type == MINUS_EQUAL) {
+                val binaryOperator = if (equals.type == PLUS_EQUAL) PLUS else MINUS
                 value = Expr.Binary(
                     left = expr,
                     operator = Token(
-                        type = PLUS,
+                        type = binaryOperator,
                         lexeme = "",
                         literal = "",
                         line = equals.line
