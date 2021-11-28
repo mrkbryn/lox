@@ -1,6 +1,5 @@
 package com.mab.klox.interpreter
 
-import com.mab.klox.*
 import com.mab.klox.error.RuntimeError
 import com.mab.klox.scanner.Scanner
 import com.mab.klox.scanner.Token

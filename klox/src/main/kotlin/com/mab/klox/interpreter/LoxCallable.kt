@@ -1,7 +1,5 @@
 package com.mab.klox.interpreter
 
-import com.mab.klox.interpreter.Interpreter
-
 /**
  * Interface representing a class method or function that can be called.
  */
