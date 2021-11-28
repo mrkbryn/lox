@@ -1,4 +1,5 @@
 rootProject.name = "lox"
 
+include "tools"
 include "jlox"
 include "klox"

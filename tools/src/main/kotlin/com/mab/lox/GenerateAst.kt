@@ -1,25 +1,18 @@
-package com.mab.klox.tools
+package com.mab.lox
 
 import java.io.PrintWriter
-import kotlin.system.exitProcess
 
 class GenerateAst {
     companion object {
-        const val basePackage = "com.mab.lox"
+        const val basePackage = "com.mab.klox"
     }
 }
 
-fun main(args: Array<String>) {
-    println("Running generate_ast with args: $args")
-    if (args.size != 1) {
-        System.err.println("Usage: generateAst <output directory>")
-        exitProcess(64)
-    }
+const val kloxOutputDir = "/Users/mabryan/code/lox/klox/src/main/kotlin/com/mab/klox"
 
-    val outputDir = args[0]
-
+fun main() {
     defineAst(
-        outputDir = outputDir,
+        outputDir = kloxOutputDir,
         baseName = "Expr",
         types = listOf(
             "Assign     | val name: Token, val value: Expr",
@@ -38,7 +31,7 @@ fun main(args: Array<String>) {
     )
 
     defineAst(
-        outputDir = outputDir,
+        outputDir = kloxOutputDir,
         baseName = "Stmt",
         types = listOf(
             "Block      | val statements: List<Stmt>",
@@ -63,6 +56,8 @@ fun defineAst(
     val writer = PrintWriter(path, "UTF-8")
 
     writer.println("package ${GenerateAst.basePackage}")
+    writer.println()
+    writer.println("import com.mab.klox.scanner.Token")
     writer.println()
     writer.println("abstract class $baseName {")
 

@@ -18,6 +18,10 @@ plox/__pycache__/
 plox/venv/
 plox/dist/
 
+# Tools
+tools/build
+
+
 .idea
 
 # Rlox
