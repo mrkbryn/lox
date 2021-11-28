@@ -17,7 +17,6 @@ tasks.withType<KotlinCompile> {
 
 task("generateAst", JavaExec::class) {
     description = "Runs the GenerateAst script to output the Kotlin and Java AST files for Expr, Stmt."
-    main = "com.mab.lox.tools.GenerateAstKt"
+    main = "com.mab.lox.GenerateAstKt"
     classpath = sourceSets["main"].runtimeClasspath
-    args = listOf("src/main/kotlin/com/mab/lox")
 }
