@@ -140,4 +140,20 @@ class AssignmentTests : ShouldSpec({
             
         """.trimIndent()
     }
+
+    should("handle add equals operator") {
+        val source = """
+            var x = 1;
+            x += 5;
+            print x;
+        """.trimIndent()
+        runScript(source) shouldBe """
+            6
+            
+        """.trimIndent()
+    }
+
+    should("check operands for add equals operator") {
+
+    }
 })
